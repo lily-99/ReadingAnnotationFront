@@ -12,3 +12,30 @@ html, body, #app{
 .el-card{
     box-shadow:0 1px 1px rgba(0,0,0,0.15) !important;
 }
+
+#js-highlight
+{
+	list-style: none;
+	background: gainsboro;
+	border: solid 1px darkgrey;
+	margin: 0px;
+	padding: 5px;
+	position: absolute;
+	/*left: 0px;*/
+	top: 0px;
+	display: none;
+	border-bottom: solid 1px darkgrey;
+}
+#delete-tag
+{
+	list-style: none;
+	background: gainsboro;
+	border: solid 1px darkgrey;
+	margin: 0px;
+	padding: 5px;
+	position: absolute;
+	/*left: 0px;*/
+	top: 0px;
+	display: none;
+	border-bottom: solid 1px darkgrey;
+}
