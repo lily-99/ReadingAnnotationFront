@@ -1,27 +1,69 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
-
+import Login from '@/components/Login.vue'
+import Home from '@/components/Home.vue'
+import Register from '@/components/Register.vue'
+import SelectCourse from '@/components/SelectCourse.vue'
+import SIdentify from '@/components/Identify.vue'
+import Notice from '@/components/Notice.vue'
+import Groups from '@/components/Groups.vue'
+import ReadingTask from'@/components/ReadingTask.vue'
+import StudyData from'@/components/StudyData.vue'
+import AllCourse from '@/components/AllCourse.vue'
+import Person from '@/components/Person.vue'
 Vue.use(VueRouter)
+Vue.use(SIdentify)
+Vue.use(Person)
 
-const routes = [
-  {
-    path: '/',
-    name: 'Home',
-    component: Home
-  },
-  {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-  }
-]
 
-const router = new VueRouter({
-  routes
+export default new VueRouter({
+  routes:[
+    {
+      path: '/',
+      redirect: '/login'
+    },
+    {
+      path: '/login',
+      component: Login
+    },
+    {
+      path:'/home',
+      redirect:'/allcourse',
+      component: Home,
+      children:[
+        {
+          path:'/selectcourse',
+          component:SelectCourse
+        },
+        {
+          path:'/allcourse',
+          component:AllCourse
+        },
+        {
+          path:'/notice',
+          component:Notice
+        },
+        {
+          path:'/groups',
+          component:Groups
+        },
+        {
+          path:'/readingtask',
+          component:ReadingTask
+        },
+        {
+          path:'/studydata',
+          component:StudyData
+        },
+        {
+          path:'/person',
+          component:Person
+        },
+      ]
+    },
+    {
+      path:'/register',
+      component: Register
+    }
+  ]
 })
-
-export default router
