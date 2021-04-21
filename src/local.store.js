@@ -1,3 +1,4 @@
+import axios from 'axios';
 class LocalStore {
     constructor(id) {
 		this.key = id !== undefined ? `highlight-mengshou-${id}` : 'highlight-mengshou';
@@ -16,29 +17,38 @@ class LocalStore {
     }
 
     jsonToStore(stores) {
-        localStorage.setItem(this.key, JSON.stringify(stores));
+        localStorage.setItem(this.key, JSON.stringify(stores));// 改为 调用api 存入后台
     }
 
-    save(data) {
-        const stores = this.storeToJson();
-        const map = {};
-        stores.forEach((store, idx) => map[store.hs.id] = idx);
+    save(highlightInfo) {
+        axios.post('http://10.147.51.25:8080/readingannotation/articleTask/insertHighlight',{
+          articleId:1,
+          groupId:2,
+          userId:3,
+          currentAuthority: 1,
+          highlightInfo
+      }).then(ret=>{
+        console.log('data submitted')
+      })
+        // const stores = this.storeToJson();
+        // const map = {};
+        // stores.forEach((store, idx) => map[store.hs.id] = idx);
 
-        if (!Array.isArray(data)) {
-            data = [data];
-        }
+        // if (!Array.isArray(data)) {
+        //     data = [data];
+        // }
 
-        data.forEach(store => {
-            // update
-            if (map[store.hs.id] !== undefined) {
-                stores[map[store.hs.id]] = store;
-            }
-            // append
-            else {
-                stores.push(store);
-            }
-        })
-        this.jsonToStore(stores);
+        // data.forEach(store => {
+        //     // update
+        //     if (map[store.hs.id] !== undefined) {
+        //         stores[map[store.hs.id]] = store;
+        //     }
+        //     // append
+        //     else {
+        //         stores.push(store);
+        //     }
+        // })
+        // this.jsonToStore(stores);
     }
 
     forceSave(store) {
@@ -48,6 +58,15 @@ class LocalStore {
     }
 
     remove(id) {
+    //     axios.post('http://10.147.51.25:8080/readingannotation/articleTask/deleteHighlight?highlightId=id',{
+    //       articleId:1,
+    //       groupId:2,
+    //       userId:3,
+    //       currentAuthority: 1,
+    //       highlightInfo
+    //   }).then(ret=>{
+    //     console.log('data submitted')
+    //   })
         const stores = this.storeToJson();
         let index = null;
         for (let i = 0; i < stores.length; i++) {
