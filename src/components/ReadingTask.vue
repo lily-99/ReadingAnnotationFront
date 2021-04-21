@@ -18,7 +18,7 @@
         <div>
           <button id="js-highlight" style="width: 80px;">高亮</button>
           <button id="delete-tag" style="width: 80px;">删除</button>
-          <div>$message</div>
+          <!-- <div>$message</div> -->
           <p>this is test text</p>
           <p>this is another test text</p>
         </div>
