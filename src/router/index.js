@@ -13,7 +13,19 @@ import AllCourse from '@/components/AllCourse.vue'
 import Person from '@/components/Person.vue'
 Vue.use(VueRouter)
 Vue.use(SIdentify)
-Vue.use(Person)
+
+
+//push
+const VueRouterPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push (to) {
+    return VueRouterPush.call(this, to).catch(err => err)
+}
+
+//replace
+const VueRouterReplace = VueRouter.prototype.replace
+VueRouter.prototype.replace = function replace (to) {
+  return VueRouterReplace.call(this, to).catch(err => err)
+}
 
 
 export default new VueRouter({

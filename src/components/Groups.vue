@@ -6,7 +6,7 @@
       <el-breadcrumb-item>小组成员</el-breadcrumb-item>
     </el-breadcrumb>
     <!-- <div v-for="item in array">{{item}}</div> -->
-  <div>
+   <div>
     <!-- 卡片视图区域 -->
     <div class="box">
       <template v-for="(item,index) in array">
