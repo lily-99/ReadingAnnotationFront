@@ -9,27 +9,25 @@
    <div>
     <!-- 卡片视图区域 -->
     <div class="box">
-      <template v-for="(item,index) in array">
+      <div v-for="(item,index) in array" :key="index">
          <!-- <div class="box_bar" :key="index"> -->
           <div class="box_bar">
           <!-- {{item}} -->
           <div class="box_img">
             <!-- <img  class="box_img" :src="item.pic"></img> -->
-            <img  class="box_img" src="../assets/pic/denglun.jpg"></img>
-            <div class="box_name">{{item.name}}</div>
+            <img class="box_img" src="../assets/pic/denglun.jpg"></img>
+            <div class="box_name">{{item.username}}</div>
           </div>
           <div>
           
           </div>
           <div class="box_pro">
-              <!-- <el-progress :text-inside="true" :stroke-width="22" :percentage="setItemProgress(item.pro)" v-if="!isNaN(parseInt((item.planNum/item.completeNum)*100))"
-				 :status="setItemStatus(item)" :format="setItemText(item)"></el-progress> -->
               <el-progress :text-inside="true" :stroke-width="22" :percentage="item.pro1"></el-progress>
               <el-progress :text-inside="true" :stroke-width="22" :percentage="item.pro2" status="success" style="margin-top:10px"></el-progress>
               <el-progress :text-inside="true" :stroke-width="22" :percentage="item.pro3" status="warning" style="margin-top:10px"></el-progress>
           </div> 
          </div>
-      </template>
+      </div>
       <div>
         <div class="anno">
           <span>阅读时长</span>
@@ -56,19 +54,6 @@ export default{
 data(){
   return {
     array:[],
-    // progressList: [{
-		// 				planNum: 150,
-		// 				completeNum: 80 
-		// 			},
-		// 			{
-		// 				planNum: 70,
-		// 				completeNum: 70
-		// 			},
-		// 			{
-		// 				planNum: 70,
-		// 				completeNum: 90
-		// 			}
-		// 		]
   }
 },
 mounted () {
@@ -82,37 +67,13 @@ methods: {
           //   console.log(res.data)
           //   this.array=res.data;
           // })
-          let data= await axios.post("http://localhost:8080/groups")
-          console.log(data.data.data)//请求数据
-          this.array=data.data.data;
+          let res= await axios.post("http://192.168.43.40:8080/readingannotation/listAllMember",{groupId:3})
+          console.log(res.data.data)//请求数据
+          this.array=res.data.data;
         }catch(e){
           console.error(e)//打印问题
          }
       },
-      //百分比显示
-      // setItemProgress(data) {
-			// 	if (data.planNum > data.completeNum) {
-			// 		return 100
-			// 	} else {
-			// 		return parseInt((data.planNum / data.completeNum).toFixed(1) * 100)
-			// 	}
-      // },
-      //文本显示
-      // setItemText(row) {
-			// 	return () => {
-			// 		return '计划： ' + row.planNum + '，完成： ' + row.completeNum
-			// 	}
-			// },
-      //进度条状态
-      // setItemStatus(data) {
-			// 	if (data.planNum > data.completeNum) {
-			// 		return 'exception'
-			// 	} else if (data.planNum === data.completeNum) {
-			// 		return 'success'
-			// 	} else {
-			// 		return 'warning'
-			// 	}
-			// }
    }
 }
 </script>
