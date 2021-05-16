@@ -9,35 +9,21 @@
     <el-card>
       <div slot="header">
         <div style="margin: 20px 0">
-          <el-button plain @click="public">公开</el-button>
-          <el-button type="primary" plain @click="private">仅自己可见</el-button>
-          <el-button type="success" plain @click="groups">仅小组可见</el-button>
+          <el-button plain>全部</el-button>
+          <el-button type="primary" plain>未截止已完成</el-button>
+          <el-button type="success" plain>未截止未完成</el-button>
+          <el-button type="info" plain>已截止已完成</el-button>
+          <el-button type="success" plain>已截止未完成</el-button>
         </div>
         <div>
-          <button id="js-highlight" style="width: 80px">高亮</button>
-          <button id="delete-tag" style="width: 80px">删除</button>
-          <div v-html="html"></div>
-          <!-- <div id="headLine">
-            会上，国家发展改革委汇报了西部开发进展等情况。西部各省区市政府负责同志发了言。
-            <strong>我是 strong 标签</strong>
-            <p>桃花源记</p>
-            <p>陶渊明</p>
-            <p>
-              君不见黄河之水天上来，奔流到海不复回。<br />
-              君不见高堂明镜悲白发，朝如青丝暮成雪。<br />
-              人生得意须尽欢，莫使金樽空对月。<br />
-              天生我材必有用，千金散尽还复来。<br />
-              烹羊宰牛且为乐，会须一饮三百杯。<br />
-              岑夫子，丹丘生，将进酒，杯莫停。<br />
-              与君歌一曲，请君为我倾耳听。(倾耳听 一作：侧耳听)<br />
-              钟鼓馔玉不足贵，但愿长醉不愿醒。(不足贵 一作：何足贵；不愿醒
-              一作：不复醒)<br />
-              古来圣贤皆寂寞，惟有饮者留其名。(古来 一作：自古；惟 通：唯)<br />
-              陈王昔时宴平乐，斗酒十千恣欢谑。<br />
-              主人何为言少钱，径须沽取对君酌。<br />
-              五花马、千金裘，呼儿将出换美酒，与尔同销万古愁。<br />
-            </p>
-          </div> -->
+          <button id="js-highlight" style="width: 80px;">高亮</button>
+          <button id="delete-tag" style="width: 80px;">删除</button>
+<<<<<<< HEAD
+=======
+          <!-- <div>$message</div> -->
+>>>>>>> bf09495 (注释21行)
+          <p>this is test text</p>
+          <p>this is another test text</p>
         </div>
       </div>
     </el-card>
@@ -46,310 +32,164 @@
 
 
 <script>
-import Highlighter from "web-highlighter";
-import LocalStore from "../local.store.js";
-import {
-  getPosition,
-  displayDelTag,
-  hideDelTag,
-  getIds,
-  getIntersection,
-} from "../highlighter.js";
-import axios from "axios";
+import Highlighter from 'web-highlighter'
+import LocalStore from '../local.store.js'
+import {getPosition, displayDelTag, hideDelTag, getIds, getIntersection} from '../highlighter.js'
 
 export default {
-  data() {
-    return {
-      html: '',
-    };
-  },
-  methods:{
-    public(){
-      axios.get('http://10.147.18.68:8080/readingannotation/articleTask/showInfoListByArticleAndUser', {
-      　　params: {
-           articleId:1,
-        //    groupId:2,
-           userId:1,
-            currentAuthority: 2
-        }
-      }).then(function (response) {
-        //alert(response.data, '\r\n');
-        const store=JSON.stringify(response.data.data);
-        let sources;
-        try {
-            sources = JSON.parse(store) || [];
-        }
-        catch (e) {
-            sources = [];
-        }
-        return sources;
-      }).catch(function (error) {
-      　alert(error);
-        return [];
-      });
-    },
-    private(){
-      axios.get('http://10.147.18.68:8080/readingannotation/articleTask/showInfoListByArticleAndUser', {
-      　　params: {
-           articleId:1,
-        //    groupId:2,
-           userId:1,
-        //    currentAuthority: 1
-        }
-      }).then(function (response) {
-        //alert(response.data, '\r\n');
-        const store=JSON.stringify(response.data.data);
-        let sources;
-        try {
-            sources = JSON.parse(store) || [];
-        }
-        catch (e) {
-            sources = [];
-        }
-        return sources;
-      }).catch(function (error) {
-      　alert(error);
-        return [];
-      });
-    },
-    groups(){
-      axios.get('http://10.147.18.68:8080/readingannotation/articleTask/showInfoListByArticleAndUser', {
-      　　params: {
-           articleId:1,
-            groupId:2,
-           //userId:1,
-        //    currentAuthority: 1
-        }
-      }).then(function (response) {
-        //alert(response.data, '\r\n');
-        const store=JSON.stringify(response.data.data);
-        let sources;
-        try {
-            sources = JSON.parse(store) || [];
-        }
-        catch (e) {
-            sources = [];
-        }
-        return sources;
-      }).catch(function (error) {
-      　alert(error);
-        return [];
-      });
-    }
-  },
   mounted() {
-    //显示文字
-    axios.get("http://192.168.43.40:8080/findEssayById",{
-      params:{
-        id:9
-      }    
-    })
-    .then((response)=>{
-      console.log(response.data.data.content);
-      let textareaHtml=response.data.data.content;
-      //var srcReg = /src=([\'\"]?([^\'\"]*)[\'\"]?)/ig;
-      if(textareaHtml){
-      //textareaHtml = textareaHtml.replace(srcReg,"src='"+this.serverSrc+"$2"+"'");
-      this.html = textareaHtml;
-      }
-    })
-
-    //高亮部分
     const highlighter = new Highlighter({
-      wrapTag: "i",
-      exceptSelectors: [".my-remove-tip", "pre", "code"],
+        wrapTag: 'i',
+        exceptSelectors: ['.my-remove-tip', 'pre', 'code']
     });
     const store = new LocalStore();
-    const log = console.log.bind(console, "[highlighter]");
+    const log = console.log.bind(console, '[highlighter]');
 
     highlighter.hooks.Render.SelectedNodes.tap((id, selectedNodes) => {
-      selectedNodes = selectedNodes.filter((n) => n.$node.textContent);
-      if (selectedNodes.length === 0) {
-        return [];
-      }
-
-      const candidates = selectedNodes.slice(1).reduce(
-        (left, selected) =>
-          getIntersection(left, getIds(highlighter, selected)),
-        // function(left, selected){
-        //   console.log(left, selected);
-        //   return getIntersection(left, getIds(selected));
-        // },
-        getIds(highlighter, selectedNodes[0])
-      );
-      for (let i = 0; i < candidates.length; i++) {
-        if (
-          highlighter.getDoms(candidates[i]).length === selectedNodes.length
-        ) {
-          return [];
+        selectedNodes = selectedNodes.filter(n => n.$node.textContent);
+        if (selectedNodes.length === 0) {
+            return [];
         }
-      }
 
-      return selectedNodes;
+        const candidates = selectedNodes.slice(1).reduce(
+            (left, selected) => getIntersection(left, getIds(highlighter,selected)),
+            // function(left, selected){
+            //   console.log(left, selected);
+            //   return getIntersection(left, getIds(selected));
+            // },
+            getIds(highlighter,selectedNodes[0])
+        );
+        for (let i = 0; i < candidates.length; i++) {
+            if (highlighter.getDoms(candidates[i]).length === selectedNodes.length) {
+                return [];
+            }
+        }
+
+        return selectedNodes;
     });
 
-    highlighter.hooks.Serialize.Restore.tap((source) =>
-      log("Serialize.Restore hook -", source)
+    highlighter.hooks.Serialize.Restore.tap(
+        source =>  log('Serialize.Restore hook -', source)
     );
 
     highlighter.hooks.Serialize.RecordInfo.tap(() => {
-      const extraInfo = Math.random().toFixed(4);
-      log("Serialize.RecordInfo hook -", extraInfo);
-      return extraInfo;
+        const extraInfo = Math.random().toFixed(4);
+        log('Serialize.RecordInfo hook -', extraInfo)
+        return extraInfo;
     });
 
     /**
      * retrieve from local store
      */
-    // axios
-    //   .get(
-    //     // "http://10.147.18.68:8080/readingannotation/articleTask/showHighlightInfoListByArticleAndUser",
-    //     "http://10.147.18.68:8080/readingannotation/articleTask/showHighlightInfoListByArticleAndGroup",
-    //     {
-    //       params: {
-    //         articleId: 1,
-    //         groupId:2,
-    //         //userId: 3,
-    //         //currentAuthority: 1 //currentAuthority  当前用户权限  0：仅自己  1：小组可见 
-    //       },
-    //     }
-    //   )
-    //   .then(function (response) {
-    //     //alert(response.data, '\r\n');
-    //     const storeInfos = response.data.data;
-    //     for (var i = 0; i < storeInfos.length; i++) {
-    //       var info = storeInfos[i];
-    //       highlighter.fromStore(
-    //         info.hs.startMeta,//
-    //         info.hs.endMeta,
-    //         info.hs.text,
-    //         info.hs.id,
-    //         info.hs.extra
-    //       );
-    //     }
-    //     // storeInfos.forEach(
-    //     //   ({hs}) => highlighter.fromStore(hs.startMeta, hs.endMeta, hs.text, hs.id, hs.extra)
-    //     // );
-    //   })
-    //   .catch(function (error) {
-    //     alert(error);
-    //     return [];
-    //   });
+    const storeInfos =  store.getAll();
+    storeInfos.forEach(
+        ({hs}) => highlighter.fromStore(hs.startMeta, hs.endMeta, hs.text, hs.id, hs.extra)
+    );
 
-    /**
-     * highlighter event listener
-     */
+
+/**
+ * highlighter event listener
+ */
     highlighter
-      .on(Highlighter.event.CLICK, ({ id }) => {
+    .on(Highlighter.event.CLICK, ({id}) => {
         const position = getPosition(highlighter.getDoms(id));
         displayDelTag(id);
-        log("click -", id);
-      })
-      .on(Highlighter.event.HOVER, ({ id }) => {
-        log("hover -", id);
-        highlighter.addClass("highlight-wrap-hover", id);
-      })
-      .on(Highlighter.event.HOVER_OUT, ({ id }) => {
-        log("hover out -", id);
-        setTimeout(function () {
-          hideDelTag();
-        }, 5000);
-        highlighter.removeClass("highlight-wrap-hover", id);
-      })
-      .on(Highlighter.event.CREATE, ({ sources }) => {
-        log("create -", sources);
-        sources = sources.map((hs) => ({ hs }));
+		log('click -', id);
+    })
+    .on(Highlighter.event.HOVER, ({id}) => {
+        log('hover -', id);
+        highlighter.addClass('highlight-wrap-hover', id);
+    })
+    .on(Highlighter.event.HOVER_OUT, ({id}) => {
+        log('hover out -', id);
+		setTimeout(function() { hideDelTag(); }, 5000);
+        highlighter.removeClass('highlight-wrap-hover', id);
+    })
+    .on(Highlighter.event.CREATE, ({sources}) => {
+        log('create -', sources);
+        sources = sources.map(hs => ({hs}));
         store.save(sources);
-      })
-      .on(Highlighter.event.REMOVE, ({ ids }) => {
-        log("remove -", ids);
-        ids.forEach((id) => store.remove(id));
-      });
+    })
+    .on(Highlighter.event.REMOVE, ({ids}) => {
+        log('remove -', ids);
+        ids.forEach(id => store.remove(id));
+    });
 
-    document.addEventListener("click", (e) => {
-      const $ele = e.target;
+    document.addEventListener('click', e => {
+        const $ele = e.target;
 
-      // delete highlight
-      if ($ele.id === "delete-tag") {
-        const id = $ele.value; //value stored the id
-        log("*click remove-tip*", id);
-        if(highlighter.remove(id))
-        {
-          highlighter.removeClass("highlight-wrap-hover", id);
-          highlighter.remove(id);
-          hideDelTag(); 
+        // delete highlight
+        if ($ele.id === 'delete-tag') {
+            const id = $ele.value;  //value stored the id
+            log('*click remove-tip*', id);
+            highlighter.removeClass('highlight-wrap-hover', id);
+            highlighter.remove(id);
+    		hideDelTag();
         }
-        else
-        {
-          alert("只能删除自己的批注！");
-        }
-      }
 
-      // highlight range manually
-      else if ($ele.id === "js-highlight") {
-        const selection = window.getSelection();
-        if (selection.isCollapsed) {
-          return;
+        // highlight range manually
+        else if ($ele.id === 'js-highlight') {
+            const selection = window.getSelection();
+            if (selection.isCollapsed) {
+                return;
+            }
+            highlighter.fromRange(selection.getRangeAt(0));
+            window.getSelection().removeAllRanges();
         }
-        highlighter.fromRange(selection.getRangeAt(0));
-        window.getSelection().removeAllRanges();
-      }
     });
 
     let hoveredTipId;
-    document.addEventListener("mouseover", (e) => {
-      const $ele = e.target;
-      // toggle highlight hover state
-      if (
-        $ele.classList.contains("my-remove-tip") &&
-        hoveredTipId !== $ele.dataset.id
-      ) {
-        hoveredTipId = $ele.dataset.id;
-        highlighter.removeClass("highlight-wrap-hover");
-        highlighter.addClass("highlight-wrap-hover", hoveredTipId);
-      } else if (
-        !$ele.classList.contains("my-remove-tip") &&
-        !$ele.classList.contains("highlight-mengshou-wrap")
-      ) {
-        highlighter.removeClass("highlight-wrap-hover", hoveredTipId);
-        hoveredTipId = null;
-      }
+    document.addEventListener('mouseover', e => {
+        const $ele = e.target;
+        // toggle highlight hover state
+        if ($ele.classList.contains('my-remove-tip') && hoveredTipId !== $ele.dataset.id) {
+            hoveredTipId = $ele.dataset.id;
+            highlighter.removeClass('highlight-wrap-hover');
+            highlighter.addClass('highlight-wrap-hover', hoveredTipId);
+        }
+        else if (!$ele.classList.contains('my-remove-tip') && !$ele.classList.contains('highlight-mengshou-wrap')) {
+            highlighter.removeClass('highlight-wrap-hover', hoveredTipId);
+            hoveredTipId = null;
+        }
     });
 
     //自定义一个浏览器右键菜单，单击右键是显示它
     //oncontextmenu上下文菜单事件，右键菜单
-    document.documentElement.oncontextmenu = function (e) {
-      var rm = document.getElementById("js-highlight");
-      e = e || window.event;
+    document.documentElement.oncontextmenu=function (e) {
+    	var rm=document.getElementById("js-highlight");
+      e=e || window.event;
 
-      var mx = e.clientX;
-      var my = e.clientY;
+    	var mx=e.clientX;
+    	var my=e.clientY;
 
-      var rmWidth = parseInt(rm.style.width);
-      var pageWidth = document.documentElement.clientWidth;
-      if (mx + rmWidth < pageWidth) {
-        rm.style.left = mx + "px";
-        rm.style.top = my + "px";
-      } else {
-        rm.style.right = mx + "px";
-        rm.style.top = my + "px";
-      }
+    	var rmWidth=parseInt(rm.style.width);
+    	var pageWidth=document.documentElement.clientWidth;
+    	if((mx+rmWidth)<pageWidth)
+    	{
+    		rm.style.left=mx+"px";
+    		rm.style.top=my+"px";
+    	}
+    	else
+    	{
+    		rm.style.right=mx+"px";
+    		rm.style.top=my+"px";
+    	}
 
-      rm.style.display = "block";
+    	rm.style.display="block";
 
-      return false; //阻止默认的右键菜单显示
+    	return false; //阻止默认的右键菜单显示
     };
 
     //不需要积隐藏右键菜单
-    document.documentElement.onclick = function (e) {
-      var rm = document.getElementById("js-highlight");
-      rm.style.display = "none";
-    };
+    document.documentElement.onclick=function (e) {
+      var rm=document.getElementById("js-highlight");
+    	rm.style.display="none";
+    }
   },
 
   beforeDestroy() {
-    document.documentElement.onclick = function (e) {};
-    document.documentElement.oncontextmenu = function (e) {};
-  },
-};
+    document.documentElement.onclick=function (e) {};
+    document.documentElement.oncontextmenu=function (e) {}
+  }
+}
 </script>
