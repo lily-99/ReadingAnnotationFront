@@ -5,19 +5,25 @@
       <el-breadcrumb-item :to="{ path: '/allcourse' }">首页</el-breadcrumb-item>
       <el-breadcrumb-item>阅读任务</el-breadcrumb-item>
     </el-breadcrumb>
-    <!-- 卡片视图区域 -->
-    <el-card>
-      <div slot="header">
-        <div style="margin: 20px 0">
-          <el-button plain @click="public">公开</el-button>
-          <el-button type="primary" plain @click="private">仅自己可见</el-button>
-          <el-button type="success" plain @click="groups">仅小组可见</el-button>
+    <div style="display: flex">
+      <!-- 卡片视图区域 -->
+      <el-card style="width: 1200px; margin-right: 20px">
+        <div slot="header">
+          <div style="margin: 20px 0">
+            <el-button plain @click="public">公开</el-button>
+            <el-button type="primary" plain @click="private"
+              >仅自己可见</el-button
+            >
+            <el-button type="success" plain @click="groups"
+              >仅小组可见</el-button
+            >
+          </div>
         </div>
         <div>
           <button id="js-highlight" style="width: 80px">高亮</button>
           <button id="delete-tag" style="width: 80px">删除</button>
           <div v-html="html"></div>
-          <!-- <div id="headLine">
+          <div id="headLine">
             会上，国家发展改革委汇报了西部开发进展等情况。西部各省区市政府负责同志发了言。
             <strong>我是 strong 标签</strong>
             <p>桃花源记</p>
@@ -37,13 +43,19 @@
               主人何为言少钱，径须沽取对君酌。<br />
               五花马、千金裘，呼儿将出换美酒，与尔同销万古愁。<br />
             </p>
-          </div> -->
+          </div>
         </div>
-      </div>
-    </el-card>
+      </el-card>
+
+      <el-card style="width: 600px">
+        <div id="comment" class="col-md-9 rightBox">
+          <commemt-content></commemt-content>
+          <comment-textarea></comment-textarea>
+        </div>
+      </el-card>
+    </div>
   </div>
 </template>
-
 
 <script>
 import Highlighter from "web-highlighter";
@@ -56,111 +68,42 @@ import {
   getIntersection,
 } from "../highlighter.js";
 import axios from "axios";
+import commentTextarea from "./commentTextarea";
+import commemtContent from "./commemtContent";
+import Vue from "vue";
+const highlighter = new Highlighter({
+  wrapTag: "i",
+  exceptSelectors: [".my-remove-tip", "pre", "code"],
+});
+const store = new LocalStore();
+const log = console.log.bind(console, "[highlighter]");
+sessionStorage.setItem("authority", 0); //小组是2，个人是1，公共是0
+sessionStorage.setItem("init", 0);
 
 export default {
+  //name="app",
   data() {
     return {
-      html: '',
+      html: "",
     };
   },
-  methods:{
-    public(){
-      axios.get('http://10.147.18.68:8080/readingannotation/articleTask/showInfoListByArticleAndUser', {
-      　　params: {
-           articleId:1,
-        //    groupId:2,
-           userId:1,
-            currentAuthority: 2
-        }
-      }).then(function (response) {
-        //alert(response.data, '\r\n');
-        const store=JSON.stringify(response.data.data);
-        let sources;
-        try {
-            sources = JSON.parse(store) || [];
-        }
-        catch (e) {
-            sources = [];
-        }
-        return sources;
-      }).catch(function (error) {
-      　alert(error);
-        return [];
-      });
-    },
-    private(){
-      axios.get('http://10.147.18.68:8080/readingannotation/articleTask/showInfoListByArticleAndUser', {
-      　　params: {
-           articleId:1,
-        //    groupId:2,
-           userId:1,
-        //    currentAuthority: 1
-        }
-      }).then(function (response) {
-        //alert(response.data, '\r\n');
-        const store=JSON.stringify(response.data.data);
-        let sources;
-        try {
-            sources = JSON.parse(store) || [];
-        }
-        catch (e) {
-            sources = [];
-        }
-        return sources;
-      }).catch(function (error) {
-      　alert(error);
-        return [];
-      });
-    },
-    groups(){
-      axios.get('http://10.147.18.68:8080/readingannotation/articleTask/showInfoListByArticleAndUser', {
-      　　params: {
-           articleId:1,
-            groupId:2,
-           //userId:1,
-        //    currentAuthority: 1
-        }
-      }).then(function (response) {
-        //alert(response.data, '\r\n');
-        const store=JSON.stringify(response.data.data);
-        let sources;
-        try {
-            sources = JSON.parse(store) || [];
-        }
-        catch (e) {
-            sources = [];
-        }
-        return sources;
-      }).catch(function (error) {
-      　alert(error);
-        return [];
-      });
-    }
-  },
   mounted() {
-    //显示文字
-    axios.get("http://192.168.43.40:8080/findEssayById",{
-      params:{
-        id:9
-      }    
-    })
-    .then((response)=>{
-      console.log(response.data.data.content);
-      let textareaHtml=response.data.data.content;
-      //var srcReg = /src=([\'\"]?([^\'\"]*)[\'\"]?)/ig;
-      if(textareaHtml){
-      //textareaHtml = textareaHtml.replace(srcReg,"src='"+this.serverSrc+"$2"+"'");
-      this.html = textareaHtml;
-      }
-    })
+    //显示富文本 修改一下API
+    /*axios
+      .get(axios.defaults.baseURL + "findEssayById", {
+        params: {
+          id: 9,
+        },
+      })
+      .then((response) => {
+        console.log(response.data.data.content);
+        let textareaHtml = response.data.data.content;
+        if (textareaHtml) {
+          this.html = textareaHtml;
+        }
+      });*/
 
     //高亮部分
-    const highlighter = new Highlighter({
-      wrapTag: "i",
-      exceptSelectors: [".my-remove-tip", "pre", "code"],
-    });
-    const store = new LocalStore();
-    const log = console.log.bind(console, "[highlighter]");
 
     highlighter.hooks.Render.SelectedNodes.tap((id, selectedNodes) => {
       selectedNodes = selectedNodes.filter((n) => n.$node.textContent);
@@ -168,15 +111,13 @@ export default {
         return [];
       }
 
-      const candidates = selectedNodes.slice(1).reduce(
-        (left, selected) =>
-          getIntersection(left, getIds(highlighter, selected)),
-        // function(left, selected){
-        //   console.log(left, selected);
-        //   return getIntersection(left, getIds(selected));
-        // },
-        getIds(highlighter, selectedNodes[0])
-      );
+      const candidates = selectedNodes
+        .slice(1)
+        .reduce(
+          (left, selected) =>
+            getIntersection(left, getIds(highlighter, selected)),
+          getIds(highlighter, selectedNodes[0])
+        );
       for (let i = 0; i < candidates.length; i++) {
         if (
           highlighter.getDoms(candidates[i]).length === selectedNodes.length
@@ -184,7 +125,6 @@ export default {
           return [];
         }
       }
-
       return selectedNodes;
     });
 
@@ -197,44 +137,6 @@ export default {
       log("Serialize.RecordInfo hook -", extraInfo);
       return extraInfo;
     });
-
-    /**
-     * retrieve from local store
-     */
-    // axios
-    //   .get(
-    //     // "http://10.147.18.68:8080/readingannotation/articleTask/showHighlightInfoListByArticleAndUser",
-    //     "http://10.147.18.68:8080/readingannotation/articleTask/showHighlightInfoListByArticleAndGroup",
-    //     {
-    //       params: {
-    //         articleId: 1,
-    //         groupId:2,
-    //         //userId: 3,
-    //         //currentAuthority: 1 //currentAuthority  当前用户权限  0：仅自己  1：小组可见 
-    //       },
-    //     }
-    //   )
-    //   .then(function (response) {
-    //     //alert(response.data, '\r\n');
-    //     const storeInfos = response.data.data;
-    //     for (var i = 0; i < storeInfos.length; i++) {
-    //       var info = storeInfos[i];
-    //       highlighter.fromStore(
-    //         info.hs.startMeta,//
-    //         info.hs.endMeta,
-    //         info.hs.text,
-    //         info.hs.id,
-    //         info.hs.extra
-    //       );
-    //     }
-    //     // storeInfos.forEach(
-    //     //   ({hs}) => highlighter.fromStore(hs.startMeta, hs.endMeta, hs.text, hs.id, hs.extra)
-    //     // );
-    //   })
-    //   .catch(function (error) {
-    //     alert(error);
-    //     return [];
-    //   });
 
     /**
      * highlighter event listener
@@ -257,13 +159,17 @@ export default {
         highlighter.removeClass("highlight-wrap-hover", id);
       })
       .on(Highlighter.event.CREATE, ({ sources }) => {
-        log("create -", sources);
-        sources = sources.map((hs) => ({ hs }));
-        store.save(sources);
+        if (sessionStorage.getItem("init") != 1) {
+          log("create -", sources);
+          sources = sources.map((hs) => ({ hs }));
+          store.save(sessionStorage.getItem("authority"), sources);
+        }
       })
       .on(Highlighter.event.REMOVE, ({ ids }) => {
-        log("remove -", ids);
-        ids.forEach((id) => store.remove(id));
+        if (sessionStorage.getItem("init") != 1) {
+          log("remove -", ids);
+          ids.forEach((id) => store.remove(id));
+        }
       });
 
     document.addEventListener("click", (e) => {
@@ -273,16 +179,14 @@ export default {
       if ($ele.id === "delete-tag") {
         const id = $ele.value; //value stored the id
         log("*click remove-tip*", id);
-        if(highlighter.remove(id))
-        {
-          highlighter.removeClass("highlight-wrap-hover", id);
-          highlighter.remove(id);
-          hideDelTag(); 
-        }
-        else
-        {
-          alert("只能删除自己的批注！");
-        }
+        //if (highlighter.remove(id))
+        //{
+        highlighter.removeClass("highlight-wrap-hover", id);
+        highlighter.remove(id);
+        hideDelTag();
+        //} else {
+        //alert("只能删除自己的批注！");
+        //}
       }
 
       // highlight range manually
@@ -347,9 +251,127 @@ export default {
     };
   },
 
+  methods: {
+    //查找具体文章所有公共高亮信息 currentAuthority=2 + articleId
+    public() {
+      axios
+        .get(
+          axios.defaults.baseURL + "articleTask/showPublicHighlightInfoList",
+          {
+            params: {
+              articleId: 1,
+            },
+          }
+        )
+        .then(function (response) {
+          sessionStorage.setItem("authority", 0);
+          sessionStorage.setItem("init", 1);
+          const storeInfos = response.data.data;
+          highlighter.removeAll();
+          //画出所有高亮内容
+          storeInfos.forEach(({ hs }) =>
+            highlighter.fromStore(
+              hs.startMeta,
+              hs.endMeta,
+              hs.text,
+              hs.id,
+              hs.extra
+            )
+          );
+          sessionStorage.setItem("init", 0);
+        })
+        .catch(function (error) {
+          alert(error);
+          return [];
+        });
+    },
+    //查询当前阅读任务下的个人所有高亮数据 currentAuthority=0，1，2 + articleId + userId
+    private() {
+      axios
+        .get(
+          axios.defaults.baseURL + "articleTask/showHighlightInfoListByUser",
+          {
+            params: {
+              articleId: 1,
+              userId: 3,
+            },
+          }
+        )
+        .then(function (response) {
+          sessionStorage.setItem("authority", 1);
+          sessionStorage.setItem("init", 1);
+          const storeInfos = response.data.data;
+          //画出所有高亮内容
+          highlighter.removeAll();
+          storeInfos.forEach(({ hs }) =>
+            highlighter.fromStore(
+              hs.startMeta,
+              hs.endMeta,
+              hs.text,
+              hs.id,
+              hs.extra
+            )
+          );
+          sessionStorage.setItem("init", 0);
+        })
+        .catch(function (error) {
+          alert(error);
+          return [];
+        });
+    },
+    //查询当前任务下小组成员所有的高亮 currentAuthority=1 + articleId + group
+    groups() {
+      axios
+        .get(
+          axios.defaults.baseURL + "articleTask/showGroupHighlightInfoList",
+          {
+            params: {
+              articleId: 1,
+              groupId: 2,
+            },
+          }
+        )
+        .then(function (response) {
+          sessionStorage.setItem("authority", 2);
+          sessionStorage.setItem("init", 1);
+          const storeInfos = response.data.data;
+          //画出所有高亮内容
+          highlighter.removeAll();
+          storeInfos.forEach(({ hs }) =>
+            highlighter.fromStore(
+              hs.startMeta,
+              hs.endMeta,
+              hs.text,
+              hs.id,
+              hs.extra
+            )
+          );
+          sessionStorage.setItem("init", 0);
+        })
+        .catch(function (error) {
+          alert(error);
+          return [];
+        });
+    },
+  },
+
   beforeDestroy() {
     document.documentElement.onclick = function (e) {};
     document.documentElement.oncontextmenu = function (e) {};
+    sessionStorage.removeItem("authority");
+    sessionStorage.removeItem("init");
+  },
+  components: {
+    commentTextarea,
+    commemtContent,
   },
 };
 </script>
+
+<style lang="less" scoped>
+.rightBox {
+  background: #fff;
+  padding-bottom: 2em;
+  padding-top: 5px;
+}
+</style>

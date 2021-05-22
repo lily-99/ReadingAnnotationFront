@@ -12,21 +12,19 @@ import './assets/font_lock/iconfont.css'
 import './mock/index.js'
 import './mock/api.js'
 
-import axios from 'axios'
-import VueAxios from 'vue-axios'
+import axios from 'axios'
+import VueAxios from 'vue-axios'
+Vue.use(VueAxios, axios)
+
+import VueContextMenu from 'vue-contextmenu'
+Vue.use(VueContextMenu)
 
 // //配置请求的根路径
-axios.defaults.baseURL="http://10.147.26.177:8080/readingannotation/"
-// axios.interceptors.request.use(config=>{
-//   //在最后必须return config
-//   console.log(config)
-//   config.headers.Authorization=window.sessionStorage.getItem('token')
-// })
-// Vue.prototype.$http=axios
+axios.defaults.baseURL = "http://10.147.48.249:8080/readingannotation/"
 
 
 
-Vue.use(VueAxios,axios)
+
 
 Vue.config.productionTip = false
 
