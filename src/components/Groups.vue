@@ -9,7 +9,7 @@
    <div>
     <!-- 卡片视图区域 -->
     <div class="box">
-      <template v-for="(item,index) in array">
+      <div v-for="(item,index) in array" :key="index">
          <!-- <div class="box_bar" :key="index"> -->
           <div class="box_bar">
           <!-- {{item}} -->
@@ -27,7 +27,7 @@
               <el-progress :text-inside="true" :stroke-width="22" :percentage="item.pro3" status="warning" style="margin-top:10px"></el-progress>
           </div> 
          </div>
-      </template>
+      </div>
       <div>
         <div class="anno">
           <span>阅读时长</span>

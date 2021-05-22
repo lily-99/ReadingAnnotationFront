@@ -20,6 +20,16 @@
           </div>
         </div>
         <div>
+<<<<<<< HEAD
+          <button id="js-highlight" style="width: 80px;">高亮</button>
+          <button id="delete-tag" style="width: 80px;">删除</button>
+<<<<<<< HEAD
+=======
+          <!-- <div>$message</div> -->
+>>>>>>> bf09495 (注释21行)
+          <p>this is test text</p>
+          <p>this is another test text</p>
+=======
           <button id="js-highlight" style="width: 80px">高亮</button>
           <button id="delete-tag" style="width: 80px">删除</button>
           <div v-html="html"></div>
@@ -43,7 +53,12 @@
               主人何为言少钱，径须沽取对君酌。<br />
               五花马、千金裘，呼儿将出换美酒，与尔同销万古愁。<br />
             </p>
+<<<<<<< HEAD
           </div>
+=======
+          </div> -->
+>>>>>>> 5a0442c702b04720c7bb3101fa81bba92fbd7f91
+>>>>>>> 8a229a7542092820820eef5d0890f2bde3da7e41
         </div>
       </el-card>
 
