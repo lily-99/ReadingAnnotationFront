@@ -45,6 +45,10 @@
               </template>
             </el-menu-item>
           </el-submenu>
+          <el-menu-item index="allreadingtasks">
+            <i class="el-icon-tickets"></i>
+            <span slot="title">所有任务</span>
+          </el-menu-item>
           <el-menu-item index="readingtask">
             <i class="el-icon-tickets"></i>
             <span slot="title">阅读任务</span>

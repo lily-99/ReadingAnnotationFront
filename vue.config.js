@@ -5,7 +5,7 @@ module.exports = {
     overlay: {
       warnings: false,
       errors: true,
-      //before: require('./src/mock/api.js')
+      //before: require('./src/mock/index.js')
     }
   },
 }

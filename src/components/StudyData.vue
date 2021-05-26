@@ -1,70 +1,57 @@
 <template>
   <div>
-    <!-- 面包屑导航区域 -->
+    <!--面包屑导航区域-->
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/allcourse' }">首页</el-breadcrumb-item>
       <el-breadcrumb-item>学习数据</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <div
-      id="app"
-      @contextmenu="showMenu"
-      style="width: 100px; height: 100px; margin-top: 20px; background: red"
-    >
-      <vue-context-menu
-        :contextMenuData="contextMenuData"
-        @home="home"
-        @deletedata="deletedata"
-      ></vue-context-menu>
-    </div>
+    <el-card
+      >
+      <!-- 2. 为ECharts准备一个具备大小(宽高)的Dom -->
+      <div id="main" style="width: 700px; height: 500px"></div>
+    </el-card>
   </div>
 </template>
+
 <script>
+// 1. 导入echarts
+import * as echarts from "echarts";
+
 export default {
-  name: "app",
   data() {
-    return {
-      // 菜单数据
-      contextMenuData: {
-        menuName: "demo",
-        //菜单显示的位置
-        axis: {
-          x: null,
-          y: null,
-        },
-        //菜单选项
-        menulists: [
-          {
-            fnHandler: "home", //绑定事件
-            icoName: "fa fa-home fa-fw", //icon图标
-            btnName: "回到主页", //菜单名称
-          },
-          {
-            fnHandler: "deletedata",
-            icoName: "fa fa-minus-square-o  fa-fw",
-            btnName: "删除布局",
-          },
-        ],
+    return {};
+  },
+  created() {},
+  // 此时页面上的元素已经被渲染完毕
+  mounted() {
+    // 3. 基于准备好的dom, 初始化echarts实例
+    var myChart = echarts.init(document.getElementById("main"));
+
+    // 4. 准备数据和配置项
+    var option = {
+      xAxis: {
+        type: "category",
+        data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
       },
+      yAxis: {
+        type: "value",
+      },
+      series: [
+        {
+          data: [150, 230, 224, 218, 135, 147, 260],
+          type: "line",
+        },
+      ],
     };
+
+    // 5. 展示数据
+    myChart.setOption(option);
   },
-  methods: {
-    showMenu() {
-      event.preventDefault();
-      var x = event.clientX;
-      var y = event.clientY;
-      // Get the current location
-      this.contextMenuData.axis = {
-        x,
-        y,
-      };
-    },
-    homed() {
-      alert("主页");
-    },
-    deletedata() {
-      console.log("delete!");
-    },
-  },
+  methods: {},
 };
 </script>
+
+<style lang="less" scoped>
+
+</style>

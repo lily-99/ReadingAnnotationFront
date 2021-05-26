@@ -9,7 +9,7 @@
       <el-table-column prop="content">
         <template #default="scope">
           <i class="el-icon-message-solid"></i>
-          <span style="margin-left: 10px">{{scope.row.content}}</span>
+          <span style="margin-left: 10px">{{ scope.row.content }}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -22,16 +22,16 @@ export default {
       status: false,
       tableData: [
         {
-          content: "公告1",
+          content: "请同学们在上课前自学《将进酒》",
         },
         {
-          content: "公告2",
+          content: "《将进酒》相关的知识点已发布，请注意查看学习！",
         },
         {
-          content: "公告3",
+          content: "请同学们完成课后《静夜思》相关作业",
         },
         {
-          content: "公告4",
+          content: "上课前记得带已制作好的诗词小卡片",
         },
       ],
     };

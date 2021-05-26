@@ -11,6 +11,7 @@ import ReadingTask from'@/components/ReadingTask.vue'
 import StudyData from'@/components/StudyData.vue'
 import AllCourse from '@/components/AllCourse.vue'
 import Person from '@/components/Person.vue'
+import AllReadingTasks from '@/components/AllReadingTasks'
 Vue.use(VueRouter)
 Vue.use(SIdentify)
 
@@ -71,6 +72,10 @@ export default new VueRouter({
           path:'/person',
           component:Person
         },
+        {
+          path:'/allreadingtasks',
+          component:AllReadingTasks
+        }
       ]
     },
     {

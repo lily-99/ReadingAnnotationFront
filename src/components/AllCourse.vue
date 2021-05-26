@@ -16,14 +16,14 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55"> </el-table-column>
-        <el-table-column label="日期" sortable width="120">
+        <el-table-column label="课程号" sortable width="120">
           <template slot-scope="scope">{{ scope.row.date }}</template>
         </el-table-column>
-        <el-table-column prop="name" label="姓名" sortable width="120">
+        <el-table-column prop="name" label="课程名" sortable width="200">
         </el-table-column>
         <el-table-column
           prop="address"
-          label="地址"
+          label="作者"
           sortable
           show-overflow-tooltip
         >
@@ -40,7 +40,7 @@
       </el-table>
       <el-pagination
         small
-        :page-size="10"
+        :page-size="5"
         :pager-count="5"
         :current-page="1"
         layout="prev, pager, next"
@@ -50,7 +50,9 @@
       </el-pagination>
       <div style="margin-top: 20px">
         <el-button type="primary" plain @click="submit()">全部提交</el-button>
-        <el-button type="success" plain @click="toggleSelection()">取消选择</el-button>
+        <el-button type="success" plain @click="toggleSelection()"
+          >取消选择</el-button
+        >
       </div>
     </el-card>
   </div>
@@ -64,99 +66,44 @@ export default {
     return {
       tableData: [
         {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄",
+          date: "001",
+          name: "将进酒",
+          address: "李白",
         },
         {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄",
+          date: "002",
+          name: "春夜喜雨",
+          address: "杜甫",
         },
         {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄",
+          date: "003",
+          name: "《残春曲》",
+          address: "白居易",
         },
         {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄",
+          date: "004",
+          name: "《陌上花·陌上花开蝴蝶飞》",
+          address: "苏轼",
         },
         {
-          date: "2016-05-08",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄",
+          date: "005",
+          name: "《好事近·夜起倚危楼》",
+          address: "王国维",
         },
         {
-          date: "2016-05-06",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄",
+          date: "006",
+          name: "《南楼令·塞外重九》",
+          address: "纳兰性德",
         },
         {
-          date: "2016-05-07",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄",
+          date: "007",
+          name: "《春日郊外》",
+          address: "唐庚",
         },
         {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄",
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄",
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄",
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄",
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄",
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄",
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄",
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄",
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄",
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄",
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄",
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄",
+          date: "008",
+          name: "《菩萨蛮·红楼遥隔廉纤雨》",
+          address: "王国维",
         },
       ],
       multipleSelection: [],
@@ -164,11 +111,10 @@ export default {
     };
   },
 
-  mounted(){
-    axios.get("")
-    .then(response=>{
-      this.tableData=response;
-    })
+  mounted() {
+    axios.get("").then((response) => {
+      this.tableData = response;
+    });
   },
 
   methods: {
@@ -185,15 +131,17 @@ export default {
       this.multipleSelection = val;
     },
     submit() {
-      var temp=JSON.stringify(this.multipleSelection);
-       axios.post("",{
-         params:{
-           data:temp
-         }
-       }).then(response=>{
-         console.log(response)
-         //this.$message.success("提交成功");
-       })
+      var temp = JSON.stringify(this.multipleSelection);
+      axios
+        .post("", {
+          params: {
+            data: temp,
+          },
+        })
+        .then((response) => {
+          console.log(response);
+          //this.$message.success("提交成功");
+        });
     },
   },
 };
