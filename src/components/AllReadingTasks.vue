@@ -24,11 +24,13 @@
             :height="50"
           ></el-progress>
         </el-table-column>
+        <el-table-column prop="readingtaskId">
+          </el-table-column>>
         <el-table-column width="600">
           <template slot-scope="scope">
             <span>{{ scope.row.content.title }}</span>
             <span>{{ scope.row.content.author }}</span>
-            <el-button type="text" size="mini">开始阅读</el-button>
+            <el-button type="text" size="mini" @click="reading(scope.row.readingtaskId)">开始阅读</el-button>
           </template>
         </el-table-column>
         <el-table-column width="250">
@@ -68,21 +70,21 @@ export default {
     return {
       tableData: [
         {
+          readingtaskId:1,
           content: {
-            title: "你好李焕英",
-            author: "贾玲",
-          },
-          deadline: {},
-        },
-        {
-          content: {
-            title: "影",
-            author: "张艺谋",
+            title: "《将进酒》",
+            author: "李白",
           },
           deadline: {},
         },
       ],
     };
+  },
+  mounted(){
+    var value = sessionStorage.getItem("courseId"); 
+    console.log(value);
+    //请求后台课程号courseId的所有的阅读任务
+
   },
   methods: {
     setItemText(row) {
@@ -91,6 +93,10 @@ export default {
         return "任务截止还剩5天10小时";
       };
     },
+    reading(id){
+      sessionStorage.setItem("readingtaskId",id);
+      this.$router.push("/readingtask");
+    }
   },
 };
 </script>

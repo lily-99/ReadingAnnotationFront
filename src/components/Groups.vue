@@ -13,13 +13,14 @@
           <!-- {{item}} -->
           <div class="box_img">
             <!-- <img  class="box_img" :src="item.pic"></img> -->
-            <img  class="box_img" src="../assets/pic/denglun.jpg"></img>
-            <div class="box_name">{{item.name}}</div>
+            <img  class="box_img" src="headerUrl"></img>
+            <div class="box_name">{{item.username}}</div>
           </div>
           <div class="box_pro">
-              <el-progress :text-inside="true" :stroke-width="22" :percentage="item.pro1"></el-progress>
-              <el-progress :text-inside="true" :stroke-width="22" :percentage="item.pro2" status="success" style="margin-top:10px"></el-progress>
-              <el-progress :text-inside="true" :stroke-width="22" :percentage="item.pro3" status="warning" style="margin-top:10px"></el-progress>
+            <!-- <el-progress :text-inside="true" :stroke-width="22" :percentage="item.pro1"></el-progress> -->
+              <el-progress :text-inside="true" :stroke-width="22" :percentage="20"></el-progress>
+              <el-progress :text-inside="true" :stroke-width="22" :percentage="30" status="success" style="margin-top:10px"></el-progress>
+              <el-progress :text-inside="true" :stroke-width="22" :percentage="70" status="warning" style="margin-top:10px"></el-progress>
           </div> 
           </div>
       </template>
@@ -41,7 +42,7 @@
 
 <script>
 import axios from "axios";
-import mock from "mockjs";
+//import mock from "mockjs";
 export default {
   data() {
     return {
@@ -49,11 +50,18 @@ export default {
     };
   },
   mounted() {
-    //listAllMember {groupId:3}
-    this.axios.post("http://localhost:8080/groups").then((res) => {
-      console.log(res.data);
-      this.array = res.data.data;
-    });
+    //var value = sessionStorage.getItem("courseId");
+    //console.log(value);
+    axios
+      .post(axios.defaults.baseURL + "listAllMember", {
+        params: {
+          groupId: 1,
+        },
+      })
+      .then((res) => {
+        console.log(res.data);
+        //this.array = res.data.data;
+      });
   },
 };
 </script>

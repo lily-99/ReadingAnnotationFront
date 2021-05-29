@@ -1,7 +1,9 @@
 <template>
   <div>
     <!-- 高亮按钮 -->
-    <el-button id="js-highlight" style="width: 80px" @click="highlightText">高亮</el-button>
+    <el-button id="js-highlight" style="width: 80px" @click="highlightText"
+      >高亮</el-button
+    >
 
     <!-- 面包屑导航区域 -->
     <el-breadcrumb separator-class="el-icon-arrow-right">
@@ -9,15 +11,18 @@
       <el-breadcrumb-item>阅读任务</el-breadcrumb-item>
     </el-breadcrumb>
     <div style="display: flex">
-      
       <!-- 卡片视图区域 -->
       <el-card style="width: 1200px; margin-right: 20px">
         <div slot="header">
           <div style="margin: 20px 0">
             <!--小组是2，个人是1，公共是0 -->
             <el-button plain @click="showArticleHL(0)">公开</el-button>
-            <el-button type="primary" plain @click="showArticleHL(1)">仅自己可见</el-button>
-            <el-button type="success" plain @click="showArticleHL(2)">仅小组可见</el-button>
+            <el-button type="primary" plain @click="showArticleHL(1)"
+              >仅自己可见</el-button
+            >
+            <el-button type="success" plain @click="showArticleHL(2)"
+              >仅小组可见</el-button
+            >
           </div>
         </div>
         <div>
@@ -27,11 +32,23 @@
 
       <el-card style="width: 600px">
         <div id="comment" class="col-md-9 rightBox">
-           <div style="margin: 20px 0"> <h3>高亮的文字</h3> <el-button id="delHLbtn" type="warning" @click="delHL" :disabled="delHLbtnDis">删除高亮</el-button></div>
-           <p>{{ currentHLText}}</p>
-           <!-- 获取文章id、批注id -->
-          <CommentContent v-bind:comment="hlComments"></CommentContent>
-          
+          <div style="margin: 20px 0">
+            <h3>高亮的文字</h3>
+            <el-button
+              id="delHLbtn"
+              type="warning"
+              @click="delHL"
+              :disabled="delHLbtnDis"
+              >删除高亮</el-button
+            >
+          </div>
+          <p>{{ currentHLText }}</p>
+          <!-- 获取文章id、高亮id、批注id -->
+          <CommentContent
+            v-bind:articleId="articleId"
+            v-bind:hlId="currentHLId"
+            v-bind:comment="hlComments"
+          ></CommentContent>
         </div>
       </el-card>
     </div>
@@ -54,8 +71,9 @@ sessionStorage.setItem("init", 0);
 export default {
   data() {
     return {
+      articleId: "",
       articleHtml:
-            '<p>《将进酒》</p>\
+        "<p>《将进酒》</p>\
             <p>唐 李白</p>\
             <p>\
               君不见黄河之水天上来，奔流到海不复回。<br />\
@@ -71,20 +89,22 @@ export default {
               陈王昔时宴平乐，斗酒十千恣欢谑。<br />\
               主人何为言少钱，径须沽取对君酌。<br />\
               五花马、千金裘，呼儿将出换美酒，与尔同销万古愁。<br />\
-            </p>',  //所需要高亮评论的文本
-      currentHLText: '',
-      currentHLId: '',
+            </p>", //所需要高亮评论的文本
+      currentHLText: "",
+      currentHLId: "",
       authority: 0, //小组是2，个人是1，公共是0
       delHLbtnDis: true,
-      hlComments:[],  //所选择高亮的所有评论
+      hlComments: [], //所选择高亮的所有评论
     };
   },
   mounted() {
-    //显示富文本 修改一下API
+    //根据阅读任务ID，显示响应的富文本
+    var value = sessionStorage.getItem("readingtaskId");
+    console.log(value);
     axios
-      .get(axios.defaults.baseURL + "findEssayById", {
+      .post(axios.defaults.baseURL + "findEssayById", {
         params: {
-          id: 9,
+          id: value,
         },
       })
       .then((response) => {
@@ -134,23 +154,23 @@ export default {
      */
     highlighter
       .on(Highlighter.event.CLICK, ({ id }) => {
-        var hlDoms=highlighter.getDoms(id);
+        var hlDoms = highlighter.getDoms(id);
         const position = this.getPosition(hlDoms);
-        this.delHLbtnDis=false;
-        this.currentHLId=id;
-        this.currentHLText='';
+        this.delHLbtnDis = false;
+        this.currentHLId = id;
+        this.currentHLText = "";
         //设置高亮文字
-        for (var i in hlDoms){
+        for (var i in hlDoms) {
           this.currentHLText += hlDoms[i].innerText;
         }
         //设置高亮相应的评论
         //to-do
-        this.hlComments=this.getCommentsByHLid(id);
+        this.hlComments = this.getCommentsByHLid(id);
         log("click -", id);
       })
       .on(Highlighter.event.CREATE, ({ sources }) => {
         if (sessionStorage.getItem("init") != 1) {
-          log("create -", this.authority+sources);
+          log("create -", this.authority + sources);
           sources = sources.map((hs) => ({ hs }));
           store.save(this.authority, sources);
         }
@@ -161,7 +181,6 @@ export default {
           ids.forEach((id) => store.remove(id));
         }
       });
-
 
     let hoveredTipId;
     document.addEventListener("mouseover", (e) => {
@@ -189,8 +208,13 @@ export default {
       e = e || window.event;
       var mx = e.clientX;
       var my = e.clientY;
-      var articleDiv=document.getElementById("articleDiv");
-      if (mx > articleDiv.offsetLeft && mx < articleDiv.offsetLeft+articleDiv.offsetWidth && my > articleDiv.offsetTop && my < articleDiv.offsetTop+articleDiv.offsetHeight){
+      var articleDiv = document.getElementById("articleDiv");
+      if (
+        mx > articleDiv.offsetLeft &&
+        mx < articleDiv.offsetLeft + articleDiv.offsetWidth &&
+        my > articleDiv.offsetTop &&
+        my < articleDiv.offsetTop + articleDiv.offsetHeight
+      ) {
         var rm = document.getElementById("js-highlight");
         var rmWidth = parseInt(rm.style.width);
         var pageWidth = document.documentElement.clientWidth;
@@ -205,10 +229,7 @@ export default {
         rm.style.display = "block";
 
         return false; //阻止默认的右键菜单显示
-      }
-      else
-        document.getElementById("js-highlight").style.display = "none";
-      
+      } else document.getElementById("js-highlight").style.display = "none";
     };
 
     //不需要积隐藏右键菜单
@@ -219,38 +240,44 @@ export default {
 
   methods: {
     //显示当前文章的高亮信息
-    showArticleHL(authority){
-      this.authority=authority;
-      var requestURL='';
-      var requestParams={};
-      switch (authority){
-        case 0:  //公共
-          requestURL=axios.defaults.baseURL + "articleTask/showPublicHighlightInfoList";
-          requestParams= { articleId: 1 };
+    showArticleHL(authority) {
+      this.authority = authority;
+      var requestURL = "";
+      var requestParams = {};
+      switch (authority) {
+        case 0: //公共
+          requestURL =
+            axios.defaults.baseURL + "articleTask/showPublicHighlightInfoList";
+          requestParams = { articleId: 1 };
           break;
-        case 1:  //个人
-          requestURL=axios.defaults.baseURL + "articleTask/showHighlightInfoListByUser";
-          requestParams= {articleId: 1, userId: 3 };
+        case 1: //个人
+          requestURL =
+            axios.defaults.baseURL + "articleTask/showHighlightInfoListByUser";
+          requestParams = { articleId: 1, userId: 3 };
           break;
         case 2: //小组
-          requestURL=axios.defaults.baseURL + "articleTask/showGroupHighlightInfoList";
-          requestParams= { articleId: 1, groupId: 2 };
+          requestURL =
+            axios.defaults.baseURL + "articleTask/showGroupHighlightInfoList";
+          requestParams = { articleId: 1, groupId: 2 };
       }
       axios
-        .get(
-          requestURL,
-          {
-            params: requestParams,
-          }
-        )
+        .get(requestURL, {
+          params: requestParams,
+        })
         .then((response) => {
           sessionStorage.setItem("init", 1);
-          log (this.init1);
+          log(this.init);
           const storeInfos = response.data.data;
           highlighter.removeAll();
           //画出所有高亮内容
           storeInfos.forEach(({ hs }) =>
-            highlighter.fromStore(hs.startMeta,hs.endMeta,hs.text,hs.id,hs.extra)
+            highlighter.fromStore(
+              hs.startMeta,
+              hs.endMeta,
+              hs.text,
+              hs.id,
+              hs.extra
+            )
           );
           sessionStorage.setItem("init", 0);
         })
@@ -260,11 +287,10 @@ export default {
         });
     },
 
-
     getPosition($node) {
       let offset = {
         top: 0,
-        left: 0
+        left: 0,
       };
       while ($node) {
         offset.top += $node.offsetTop;
@@ -283,19 +309,21 @@ export default {
       }
       return [
         highlighter.getIdByDom(selected.$node.parentNode),
-        highlighter.getExtraIdByDom(selected.$node.parentNode)
-      ].filter(i => i)
+        highlighter.getExtraIdByDom(selected.$node.parentNode),
+      ].filter((i) => i);
     },
 
     getIntersection(arrA, arrB) {
       const record = {};
       const intersection = [];
-      arrA.forEach(i => record[i] = true);
-      arrB.forEach(i => record[i] && intersection.push(i) && (record[i] = false));
+      arrA.forEach((i) => (record[i] = true));
+      arrB.forEach(
+        (i) => record[i] && intersection.push(i) && (record[i] = false)
+      );
       return intersection;
     },
 
-    highlightText(){
+    highlightText() {
       const selection = window.getSelection();
       if (selection.isCollapsed) {
         return;
@@ -304,24 +332,23 @@ export default {
       window.getSelection().removeAllRanges();
     },
 
-    delHL(){
-      const id = this.currentHLId;// stored highlight id
+    delHL() {
+      const id = this.currentHLId; // stored highlight id
       log("*click remove-tip*", id);
-      //if (highlighter.remove(id)) 
+      //if (highlighter.remove(id))
       //{
-        highlighter.removeClass("highlight-wrap-hover", id);
-        highlighter.remove(id);
-        this.delHLbtnDis=true;
-        this.currentHLId='';
-        this.currentHLText='';
+      highlighter.removeClass("highlight-wrap-hover", id);
+      highlighter.remove(id);
+      this.delHLbtnDis = true;
+      this.currentHLId = "";
+      this.currentHLText = "";
       //} else {
-        //alert("只能删除自己的批注！");
+      //alert("只能删除自己的批注！");
       //}
     },
 
     //通过高亮ID从数据库获取所有的评论
-    getCommentsByHLid(hlId){
-
+    getCommentsByHLid(hlId) {
       return [
         {
           id: "111",
@@ -339,9 +366,8 @@ export default {
             },
           ],
         },
-        
       ];
-    }
+    },
   },
 
   beforeDestroy() {

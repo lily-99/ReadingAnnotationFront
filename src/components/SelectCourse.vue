@@ -18,7 +18,7 @@
               </el-form-item>
               <el-form-item label="课程名">
                 <span>{{ props.row.name }}</span>
-                <el-button type="text">开始阅读</el-button>
+                <el-button type="text" @click="reading(props.row.id)">开始阅读</el-button>
               </el-form-item>
               <el-form-item label="作者">
                 <span>{{ props.row.author }}</span>
@@ -64,6 +64,7 @@
 </style>
 
 <script>
+import axios from 'axios';
 export default {
   data() {
     return {
@@ -89,10 +90,19 @@ export default {
       ],
     };
   },
+  mounted(){
+    //显示已选课程 
+  },
   methods: {
+    //根据课程id删除课程
     deleteRow(index, rows) {
       rows.splice(index, 1);
+      console.log(index+1);
     },
+    reading(id){
+      sessionStorage.setItem("courseId",id);
+      this.$router.push("/allreadingtasks");
+    }
   },
 };
 </script>

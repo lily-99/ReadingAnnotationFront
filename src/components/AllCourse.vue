@@ -10,42 +10,51 @@
     <el-card>
       <el-table
         ref="multipleTable"
-        :data="tableData"
+        :data="
+          tables.slice((currentPage - 1) * pagesize, currentPage * pagesize)
+        "
         tooltip-effect="dark"
         style="width: 100%"
         @selection-change="handleSelectionChange"
+        :row-key="rowKey"
       >
-        <el-table-column type="selection" width="55"> </el-table-column>
-        <el-table-column label="课程号" sortable width="120">
-          <template slot-scope="scope">{{ scope.row.date }}</template>
+        <el-table-column type="selection" width="55" :reserve-selection="true">
         </el-table-column>
-        <el-table-column prop="name" label="课程名" sortable width="200">
+        <el-table-column prop="courseId" label="课程号" sortable width="120">
+        </el-table-column>
+        <el-table-column prop="courseName" label="课程名" sortable width="200">
         </el-table-column>
         <el-table-column
-          prop="address"
-          label="作者"
+          prop="startTime"
+          label="开始时间"
+          sortable
+          show-overflow-tooltip
+        >
+        </el-table-column>
+        <el-table-column
+          prop="endTime"
+          label="结束时间"
           sortable
           show-overflow-tooltip
         >
         </el-table-column>
         <el-table-column align="right">
           <template slot="header" slot-scope="scope">
-            <el-input
-              v-model="search"
-              size="mini"
-              placeholder="输入关键字搜索"
-            />
+            <el-input v-model="search" size="mini" placeholder="请输入课程名" />
           </template>
         </el-table-column>
       </el-table>
       <el-pagination
         small
-        :page-size="5"
+        :page-size="pagesize"
+        :page-sizes="[2, 5, 8, 10]"
         :pager-count="5"
-        :current-page="1"
         layout="prev, pager, next"
-        :total="tableData.length"
+        :total="this.tableData.length"
         style="text-align: center; margin-top: 1%"
+        @current-change="handleCurrentChange"
+        @size-change="handleSizeChange"
+        :current-page="currentPage"
       >
       </el-pagination>
       <div style="margin-top: 20px">
@@ -64,60 +73,55 @@ import axios from "axios";
 export default {
   data() {
     return {
-      tableData: [
-        {
-          date: "001",
-          name: "将进酒",
-          address: "李白",
-        },
-        {
-          date: "002",
-          name: "春夜喜雨",
-          address: "杜甫",
-        },
-        {
-          date: "003",
-          name: "《残春曲》",
-          address: "白居易",
-        },
-        {
-          date: "004",
-          name: "《陌上花·陌上花开蝴蝶飞》",
-          address: "苏轼",
-        },
-        {
-          date: "005",
-          name: "《好事近·夜起倚危楼》",
-          address: "王国维",
-        },
-        {
-          date: "006",
-          name: "《南楼令·塞外重九》",
-          address: "纳兰性德",
-        },
-        {
-          date: "007",
-          name: "《春日郊外》",
-          address: "唐庚",
-        },
-        {
-          date: "008",
-          name: "《菩萨蛮·红楼遥隔廉纤雨》",
-          address: "王国维",
-        },
-      ],
+      tableData: [],
       multipleSelection: [],
       search: "",
+      currentPage: 1,
+      pagesize: 5,
     };
   },
 
   mounted() {
-    axios.get("").then((response) => {
-      this.tableData = response;
+    axios.get(axios.defaults.baseURL + "listAllCourse").then((response) => {
+      //console.log(response.data);
+      this.tableData = response.data.data;
     });
   },
-
+  computed: {
+    tables: {
+      get() {
+        const search = this.search;
+        if (search) {
+          return this.tableData.filter((data) => {
+            return Object.keys(data).some((key) => {
+              return String(data[key]).toLowerCase().indexOf(search) > -1;
+            });
+          });
+        }
+        return this.tableData;
+      },
+      set(newValue) {
+        return newValue;
+      },
+    },
+  },
   methods: {
+    rowKey(rows) {
+      return rows.courseId;
+    },
+    getPageData() {
+      let start = (this.currentPage - 1) * this.pagesize;
+      let end = start + this.pagesize;
+      this.tables = this.tableData.slice(start, end);
+    },
+    handleCurrentChange(val) {
+      this.currentPage = val;
+      this.getPageData();
+    },
+    handleSizeChange(val) {
+      this.pagesize = val;
+      this.getPageData();
+    },
     toggleSelection(rows) {
       if (rows) {
         rows.forEach((row) => {
@@ -130,17 +134,22 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
+    //参数是json格式
     submit() {
       var temp = JSON.stringify(this.multipleSelection);
+      console.log(temp);
       axios
-        .post("", {
+        .post(axios.defaults.baseURL + "selectCourse", {
           params: {
             data: temp,
           },
         })
         .then((response) => {
-          console.log(response);
-          //this.$message.success("提交成功");
+          console.log(response.data.status);
+          if (response.data.status == 1) {
+            this.$message.success("提交成功");
+            this.$refs.multipleTable.clearSelection();
+          } else this.$message.success("提交失败");
         });
     },
   },

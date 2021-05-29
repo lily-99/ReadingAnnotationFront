@@ -58,13 +58,13 @@ import axios from "axios";
 export default {
     data(){
         return{
-            id:'',
-            username:'',
-            email:'',
-            password:'',
+            id:'123',
+            username:'zhangsan',
+            email:'111@163.com',
+            password:'123',
             isCollapse: false,
             dialogFormVisible: false,
-            imgurl:''
+            imgurl:"../assets/logo.png"
         }       
     },
     mounted(){

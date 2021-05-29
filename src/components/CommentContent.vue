@@ -9,22 +9,22 @@
       >
         <span class="comment_name">{{ item.name }}</span> <span>{{ item.time }}</span>
         <div class="comment_content">{{ item.content }}</div>
-        <el-button @click="replyBtn(item.id,item.name)">回复</el-button>
+        <el-button size="mini" @click="replyBtn(item.id,item.name)">回复</el-button>
         <div v-if="item.reply.length > 0">
           <div class="reply" v-for="reply in item.reply">
             <span class="comment_name">{{ reply.responder }} </span>回复<span class="comment_name">{{reply.reviewers}}</span> <span>{{ reply.time }}</span>
             <p>{{ reply.content }}</p>
-            <el-button @click="replyBtn(reply.id,reply.responder)">回复</el-button>
+            <el-button size="mini" @click="replyBtn(reply.id,reply.responder)">回复</el-button>
           </div>
         </div>
       </div>
     </div>
     <div class="commentBox">
-      <h3>发表评论</h3>
+      <h3 style="width:100px">发表评论</h3>
       <b v-if="isReply">你回复&nbsp;{{ reName }}</b>
-      <textarea name="" value="请填写评论内容" v-model="commentText"></textarea>
-      <el-button class="btn" @click="addComment">发表</el-button>
-      <el-button class="btn" @click="canelComment">取消</el-button>
+      <textarea name="" value="请填写评论内容" v-model="commentText" rows="4" cols="52" style="resize:none;"></textarea>
+      <el-button class="btn" size="mini"  @click="addComment">发表</el-button>
+      <el-button class="btn" size="mini"  @click="canelComment">取消</el-button>
     </div>
   </div>
   
@@ -53,6 +53,8 @@ export default {
       //     ],
       //   },
       // ],
+      articleId:'',
+      hlId:''
   },
   data () {
     return {

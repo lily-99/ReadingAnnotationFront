@@ -1,55 +1,76 @@
 <template>
   <div class="register_container">
     <div class="register_box">
-      <el-form ref="registerForm" :model="register_form" :rules="register_rules" label-width="85px">
-          <h2 style="text-align:center">欢迎注册</h2>
+      <el-form
+        ref="registerForm"
+        :model="register_form"
+        :rules="register_rules"
+        label-width="85px"
+      >
+        <h2 style="text-align: center">欢迎注册</h2>
         <!-- 学号 -->    
-        <el-form-item label="学号" prop="id">                                
+        <el-form-item label="学号" prop="id"
+          >                                
           <el-input v-model="register_form.id"></el-input>             
         </el-form-item>
                
         <!-- 姓名 -->
-        <el-form-item label="姓名" prop="name">                                 
+        <el-form-item label="姓名" prop="name"
+          >                                 
           <el-input v-model="register_form.name"></el-input>
         </el-form-item>
-       
+
         <!-- 邮箱 -->            
-        <el-form-item label="邮箱" prop="mail">                                 
+        <el-form-item label="邮箱" prop="mail"
+          >                                 
           <el-input v-model="register_form.mail"></el-input>             
         </el-form-item>
-        
+
         <!-- 密码 -->
         <el-form-item label="密码" prop="password">
-          <el-input v-model="register_form.password" type="password" placeholder="含字母、数字"></el-input>
+           <el-input
+            v-model="register_form.password"
+            type="password"
+            placeholder="含字母、数字"
+          ></el-input>
         </el-form-item>
                     
         <!-- 二次密码 -->
         <el-form-item label="确认密码" prop="repassword">
-          <el-input v-model="register_form.repassword" type="password"></el-input>
+           <el-input
+            v-model="register_form.repassword"
+            type="password"
+          ></el-input>
         </el-form-item>
                     
         <!-- 身份 -->
-        <el-form-item label="身份" prop="radio">                     
-          <el-radio-group v-model="register_form.radio">
+            <el-form-item label="身份" prop="radio"
+          >                       <el-radio-group v-model="register_form.radio">
             <el-radio :label="1">教师</el-radio>
             <el-radio :label="2">学生</el-radio>
             <el-radio :label="3">游客</el-radio>
           </el-radio-group>
         </el-form-item>
-        
+
         <!-- 验证码  -->
         <el-form-item label="验证码">
-          <el-input style="width:125px" v-model="register_form.wcode"></el-input>
+          <el-input
+            style="width: 125px"
+            v-model="register_form.wcode"
+          ></el-input>
           <div class="code" @click="refreshCode">
-              <s-identify :identifyCode="identifyCode"></s-identify>
-          </div> 
+            <s-identify :identifyCode="identifyCode"></s-identify>
+          </div>
+           
         </el-form-item>
 
         <!-- 登录 -->
         <el-form-item>
           <tr>
             已有账号？<a href="http://localhost:8080/login">去登录</a>
-            <el-button type="primary" @click="login" style="margin-left:70px">注册</el-button>
+            <el-button type="primary" @click="login" style="margin-left: 70px"
+              >注册</el-button
+            >
           </tr>
         </el-form-item>
       </el-form>
@@ -58,11 +79,12 @@
 </template>
 
 <script>
-import Identify from './Identify.vue';
-import SIdentify from './Identify.vue';
+import Identify from "./Identify.vue";
+import SIdentify from "./Identify.vue";
+import axios from 'axios'
 export default {
   components: { SIdentify, Identify },
-  name:"Register",
+  name: "Register",
   data() {
     return {
       register_form: {
@@ -72,50 +94,68 @@ export default {
         password: "",
         repassword: "",
         radio: 1,
-        wcode:"",
+        wcode: "",
       },
-      register_rules:{
-        id:[
+      register_rules: {
+        id: [
           {
-            required:true,message:'请输入学号',trigger:'blur'
+            required: true,
+            message: "请输入学号",
+            trigger: "blur",
           },
           {
-            min:2,max:5,message:'长度在2到5个字符',trigger:'blur'
-          }
-        ],
-        name:[
-          {
-            required:true,message:'请输入姓名',trigger:'blur'
+            min: 2,
+            max: 5,
+            message: "长度在2到5个字符",
+            trigger: "blur",
           },
         ],
-        mail:[
+        name: [
           {
-            required:true,message:'请输入邮箱',trigger:'blur'
+            required: true,
+            message: "请输入姓名",
+            trigger: "blur",
+          },
+        ],
+        mail: [
+          {
+            required: true,
+            message: "请输入邮箱",
+            trigger: "blur",
           },
           {
-            type:'email',message:'请输入正确的邮箱地址',trigger:'blur,change'
-          }
+            type: "email",
+            message: "请输入正确的邮箱地址",
+            trigger: "blur,change",
+          },
         ],
-        password:[
+        password: [
           {
-            required:true,message:'请输入密码',trigger:'blur'
-          }        
+            required: true,
+            message: "请输入密码",
+            trigger: "blur",
+          },
         ],
-        repassword:[
+        repassword: [
           {
-            required:true,message:'请输入密码',trigger:'blur'
-          }
+            required: true,
+            message: "请输入密码",
+            trigger: "blur",
+          },
         ],
-        radio:[
+        radio: [
           {
-            required:true,message:'请选择身份',trigger:'change'
-          }
+            required: true,
+            message: "请选择身份",
+            trigger: "change",
+          },
         ],
-        wcode:[
+        wcode: [
           {
-            required: true, trigger: 'blur'
-          }
-        ]
+            required: true,
+            trigger: "blur",
+          },
+        ],
       },
       identifyCodes: "1234567890",
       identifyCode: "",
@@ -125,73 +165,81 @@ export default {
     this.identifyCode = "";
     this.makeCode(this.identifyCodes, 4);
   },
-  methods:{
-      // 判断验证码是否输入准确
-      checkCode () {
-        let wcode = this.register_form.wcode
-        wcode = wcode.toUpperCase()
-        let ccode = this.identifyCode
-        ccode = ccode.toUpperCase()
-        if (wcode !== ccode) {
-          this.$message.error('请重新输入验证码')
-          this.$set(this.register_form, 'vcode', '')
-          return 0
-        } else {
-          return 1
-        }
-      },
-      login(){
-        //验证输入的验证码是否相同
-        let codestatus=this.checkCode()
-        if(codestatus){
-          this.$refs.registerForm.validate((valid)=>{
-            if(valid){
-              //this.$refs.registerForm.validateField('password')
-              this.axios.post(axios.defaults.baseURL+"register",{id:this.register_form.id,username:this.register_form.name,password:this.register_form.password,email:this.register_form.mail,type:this.register_form.radio})
-              .then(res=>{
-                console.log(res.data)
-                if(res.data!="")
-                {
-                  this.$message.success('注册成功,请登录');
+  methods: {
+    // 判断验证码是否输入准确
+    checkCode() {
+      let wcode = this.register_form.wcode;
+      wcode = wcode.toUpperCase();
+      let ccode = this.identifyCode;
+      ccode = ccode.toUpperCase();
+      if (wcode !== ccode) {
+        this.$message.error("请重新输入验证码");
+        this.$set(this.register_form, "vcode", "");
+        return 0;
+      } else {
+        return 1;
+      }
+    },
+    login() {
+      //验证输入的验证码是否相同
+      let codestatus = this.checkCode();
+      if (codestatus) {
+        this.$refs.registerForm.validate((valid) => {
+          if (valid) {
+            //this.$refs.registerForm.validateField('password')
+            this.axios
+              .post(axios.defaults.baseURL + "register", {
+                id: this.register_form.id,
+                username: this.register_form.name,
+                password: this.register_form.password,
+                email: this.register_form.mail,
+                type: this.register_form.radio,
+              })
+              .then((res) => {
+                console.log(res.data);
+                if (res.data != "") {
+                  this.$message.success("注册成功,请登录");
                   this.$router.push("/login");
                 }
-              })
-              if (this.register_form.repassword.length >=this.register_form.password.length && this.register_form.repassword !== this.register_form.password)
-              {
-                this.$message.error("两次密码不匹配")
-              }
-              // else{
-              //   this.$message.success('注册成功,请登录');
-              //   this.$router.push("/login");
-              // }
+              });
+            if (
+              this.register_form.repassword.length >=
+                this.register_form.password.length &&
+              this.register_form.repassword !== this.register_form.password
+            ) {
+              this.$message.error("两次密码不匹配");
             }
-            else{
-              this.$message.error('注册失败，请重新输入')
-              return false;
-            }
-          })
-        }else{
-          this.$message.error('请输入正确的验证码')
-          this.$set(this.register_form,'wcode','')
-        }       
-      },
-      randomNum(min, max) {
-        return Math.floor(Math.random() * (max - min) + min);
-      },
-      refreshCode() {
-        this.identifyCode = "";
-        this.makeCode(this.identifyCodes, 4);
-      },
-      makeCode(o, l) {
-        for (let i = 0; i < l; i++) {
-          this.identifyCode += this.identifyCodes[
-            this.randomNum(0, this.identifyCodes.length)
-          ];
-        }
-      console.log(this.identifyCode);
+            // else{
+            //   this.$message.success('注册成功,请登录');
+            //   this.$router.push("/login");
+            // }
+          } else {
+            this.$message.error("注册失败，请重新输入");
+            return false;
+          }
+        });
+      } else {
+        this.$message.error("请输入正确的验证码");
+        this.$set(this.register_form, "wcode", "");
       }
-  }
-}
+    },
+    randomNum(min, max) {
+      return Math.floor(Math.random() * (max - min) + min);
+    },
+    refreshCode() {
+      this.identifyCode = "";
+      this.makeCode(this.identifyCodes, 4);
+    },
+    makeCode(o, l) {
+      for (let i = 0; i < l; i++) {
+        this.identifyCode += this.identifyCodes[
+          this.randomNum(0, this.identifyCodes.length)
+        ];
+      }
+      console.log(this.identifyCode);
+    },
+  },
+};
 </script>
 
 <style lang="less" scoped>
@@ -209,13 +257,13 @@ export default {
   background-color: #fff;
   border-radius: 5px;
 }
-.el-input{
-    width: 250px;
+.el-input {
+  width: 250px;
 }
-.el-form-item{
-    text-align-last: justify;
-    margin-top: 22px;
-    margin-left: 30px;
+.el-form-item {
+  text-align-last: justify;
+  margin-top: 22px;
+  margin-left: 30px;
 }
 .code {
   width: 114px;
@@ -224,17 +272,16 @@ export default {
   margin-left: 140px;
 }
 /deep/ .el-form-item__content {
-    display: flex;
-    line-height: 40px;
-    position: absolute;
-    font-size: 14px;
-    
+  display: flex;
+  line-height: 40px;
+  position: absolute;
+  font-size: 14px;
 }
 /deep/ .el-radio-group {
-    display: inline-block;
-    line-height: 1;
-    vertical-align: middle;
-    font-size: 0;
-    margin-top: 15px;
+  display: inline-block;
+  line-height: 1;
+  vertical-align: middle;
+  font-size: 0;
+  margin-top: 15px;
 }
 </style>

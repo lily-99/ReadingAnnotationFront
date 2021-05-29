@@ -10,7 +10,7 @@ import './assets/font_lock/iconfont.css'
 
 //引入js文件
 import './mock/index.js'
-import './mock/api.js'
+//import './mock/api.js'
 
 import axios from 'axios'
 import VueAxios from 'vue-axios'
