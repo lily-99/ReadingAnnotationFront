@@ -14,13 +14,12 @@
         <!-- <el-button size="mini" @click="replyBtn(item.userId, item.username)"
           >回复</el-button
         > -->
-        <el-button
-          size="mini"
-          @click="replyBtn(item.id, item.username, item.userId)"
+        <el-button size="mini" @click="replyBtn(item.id, item.username, item.userId)"
           >回复</el-button
         >
+
         <!-- <div v-if="item.reply.length > 0"> -->
-        <!-- <div class="reply" v-for="reply in item.reply">
+        <div class="reply" v-for="reply in item.reply">
           <span class="comment_name">{{ reply.responder }} </span>回复<span
             class="comment_name"
             >{{ reply.reviewers }}</span
@@ -30,7 +29,7 @@
           <el-button size="mini" @click="replyBtn(reply.id, reply.responder)"
             >回复</el-button
           >
-        </div> -->
+        </div>
         <!-- </div> -->
       </div>
       <div
@@ -112,6 +111,7 @@ export default {
             content: this.commentText,
             pingLunId: this.reId, //评论完
             receiverId: this.receiverId,
+            highLightId:highlightId,
             receiver: this.reName,
           })
           .then((Response) => {
@@ -119,7 +119,8 @@ export default {
             //动态显示到页面上
             axios
               .post(axios.defaults.baseURL + "listAllHuifu", {
-                pingLunId: this.reId,
+                //pingLunId: this.reId,
+                highLightId:highlightId,
               })
               .then((Response) => {
                 console.log(Response.data.data);

@@ -350,11 +350,14 @@ export default {
         })
         .then((response) => {
           console.log(response.data.data);
-          // console.log(response.data.data.pingLun);
-          // console.log(response.data.data.huiFus);
-          //this.hlComments = response.data.data.pingLun;
-          //this.replyment = response.data.data.huiFus;
+          this.hlComments = response.data.data;
         });
+        axios.post(axios.defaults.baseURL+"listAllHuifu",{
+          highLightId: hlId,
+        }).then(response=>{
+          console.log(response.data.data);
+          this.replyment=response.data.data;
+        })
       return [];
     },
   },
