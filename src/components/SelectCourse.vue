@@ -14,24 +14,26 @@
           <template slot-scope="props">
             <el-form label-position="left" inline class="demo-table-expand">
               <el-form-item label="课程号">
-                <span>{{ props.row.id }}</span>
+                <span>{{ props.row.courseId }}</span>
               </el-form-item>
               <el-form-item label="课程名">
-                <span>{{ props.row.name }}</span>
-                <el-button type="text" @click="reading(props.row.id)">开始阅读</el-button>
+                <span>{{ props.row.courseName }}</span>
+                <el-button type="text" @click="reading(props.row.courseId)"
+                  >开始阅读</el-button
+                >
               </el-form-item>
-              <el-form-item label="作者">
-                <span>{{ props.row.author }}</span>
+              <el-form-item label="开始时间">
+                <span>{{ props.row.startTime }}</span>
               </el-form-item>
-              <el-form-item label="描述">
-                <span>{{ props.row.desc }}</span>
+              <el-form-item label="结束时间">
+                <span>{{ props.row.endTime }}</span>
               </el-form-item>
             </el-form>
           </template>
         </el-table-column>
-        <el-table-column label="课程号" prop="id"> </el-table-column>
-        <el-table-column label="课程名" prop="name"></el-table-column>
-        <el-table-column label="作者" prop="author"> </el-table-column>
+        <el-table-column label="课程号" prop="courseId"> </el-table-column>
+        <el-table-column label="课程名" prop="courseName"></el-table-column>
+        <el-table-column label="开始时间" prop="startTime"> </el-table-column>
         <el-table-column fixed="right" label="操作" width="120">
           <template slot-scope="scope">
             <el-button
@@ -64,45 +66,47 @@
 </style>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 export default {
   data() {
     return {
-      tableData: [
-        {
-          id: "001",
-          name: "《将进酒》",
-          author: "李白",
-          desc: "君不见黄河之水天上来，奔流到海不复回。",
-        },
-        {
-          id: "003",
-          name: "《残春曲》",
-          author:"白居易",
-          desc:"日西无事墙阴下，闲踏宫花独自行。"
-        },
-        {
-          id: "004",
-          name: "《陌上花·陌上花开蝴蝶飞》",
-          author:"苏轼",
-          desc:"陌上花开蝴蝶飞，江山犹是昔人非。"
-        },
-      ],
+      tableData: [],
+      delid: "",
     };
   },
-  mounted(){
-    //显示已选课程 
+  mounted() {
+    var userId = localStorage.getItem("userId");
+    //显示已选课程
+    axios
+      .post(axios.defaults.baseURL + "listAllCourseByUId", {
+        userId: userId,
+      })
+      .then((Response) => {
+        console.log(Response.data);
+        this.tableData = Response.data.data;
+      });
   },
   methods: {
     //根据课程id删除课程
     deleteRow(index, rows) {
-      rows.splice(index, 1);
-      console.log(index+1);
+      //console.log(rows[index].id);
+      axios
+        .post(axios.defaults.baseURL + "moveCourse", {
+          id: rows[index].id,
+        })
+        .then((Response) => {
+          if (Response.data.status == 1) {
+            this.$message.success("删除成功");
+
+            rows.splice(index, 1);
+            this.tableData = rows;
+          }
+        });
     },
-    reading(id){
-      sessionStorage.setItem("courseId",id);
+    reading(id) {
+      sessionStorage.setItem("courseId", id);
       this.$router.push("/allreadingtasks");
-    }
+    },
   },
 };
 </script>

@@ -8,12 +8,12 @@
     <!-- 卡片视图区域 -->
     <el-card>
       <div slot="header">
-        <el-button type="text">全部</el-button>
+        <el-button type="text" @click="showreadingtask(0)">全部</el-button>
         <el-divider direction="vertical"></el-divider>
-        <el-button type="text">未截止已完成</el-button>
-        <el-button type="text">未截止未完成</el-button>
-        <el-button type="text">已截止已完成</el-button>
-        <el-button type="text">已截止未完成</el-button>
+        <el-button type="text" @click="showreadingtask(1)">未截止已完成</el-button>
+        <el-button type="text" @click="showreadingtask(2)">未截止未完成</el-button>
+        <el-button type="text" @click="showreadingtask(3)">已截止已完成</el-button>
+        <el-button type="text" @click="showreadingtask(4)">已截止未完成</el-button>
       </div>
       <el-table :data="tableData" style="width: 100%" :show-header="false">
         <el-table-column width="80">
@@ -24,18 +24,20 @@
             :height="50"
           ></el-progress>
         </el-table-column>
-        <el-table-column prop="readingtaskId">
-          </el-table-column>>
-        <el-table-column width="600">
+        <!-- readingtaskId -->
+        <!-- <el-table-column prop="id"> </el-table-column>> -->
+        <el-table-column>
           <template slot-scope="scope">
-            <span>{{ scope.row.content.title }}</span>
-            <span>{{ scope.row.content.author }}</span>
-            <el-button type="text" size="mini" @click="reading(scope.row.readingtaskId)">开始阅读</el-button>
+            <span>{{ scope.row.title }}</span>
+            <span>{{ scope.row.content }}</span>
           </template>
         </el-table-column>
-        <el-table-column width="250">
+        <el-table-column prop="explain"> </el-table-column>>
+        <el-table-column prop="process"> </el-table-column>>
+        <el-table-column prop="endTime"> </el-table-column>>
+        <el-table-column>
           <template slot-scope="scope">
-            <div>
+            <!-- <div>
               <i class="el-icon-check"></i>
               <span>至少5个批注</span>
             </div>
@@ -46,7 +48,7 @@
             <div>
               <i class="el-icon-close"></i>
               <span>至少参与3次讨论</span>
-            </div>
+            </div> -->
             <el-progress
               :text-inside="true"
               :stroke-width="20"
@@ -55,48 +57,64 @@
             ></el-progress>
           </template>
         </el-table-column>
-        <!-- <el-table-column width="100">
+        <el-table-column>
           <template slot-scope="scope">
-            <el-button type="text" size="mini">开始阅读</el-button>
+            <el-button
+              type="text"
+              size="mini"
+              @click="handleEdit(scope.$index, scope.row)"
+              >开始阅读</el-button
+            >
           </template>
-        </el-table-column> -->
+        </el-table-column>
       </el-table>
     </el-card>
   </div>
 </template>
 <script>
+import axios from "axios";
 export default {
   data() {
     return {
-      tableData: [
-        {
-          readingtaskId:1,
-          content: {
-            title: "《将进酒》",
-            author: "李白",
-          },
-          deadline: {},
-        },
-      ],
+      tableData: [],
+      authority:0 //全部：0  未截止已完成：1   未截止未完成：2   已截止已完成：3    已截止未完成：4
     };
   },
-  mounted(){
-    var value = sessionStorage.getItem("courseId"); 
-    console.log(value);
+  mounted() {
     //请求后台课程号courseId的所有的阅读任务
-
+    var courseId = sessionStorage.getItem("courseId");
+    //console.log(courseId);
+    axios
+      .post(axios.defaults.baseURL + "taskList", {
+        courseId: courseId,
+      })
+      .then((Response) => {
+        //console.log(Response.data.id);
+        this.tableData = Response.data.data;
+      });
   },
   methods: {
+    showreadingtask(authority){
+      //this.authority=authority;
+      switch(authority){
+        case 0: //全部 0
+        case 1: //未截止已完成：1 
+        case 2: //未截止未完成：2
+        case 3: //已截止已完成：3
+        case 4: //已截止未完成：4    
+      }
+    },
     setItemText(row) {
       return () => {
         //return "计划： " + row.planNum + "，完成： " + row.completeNum;
         return "任务截止还剩5天10小时";
       };
     },
-    reading(id){
-      sessionStorage.setItem("readingtaskId",id);
+    handleEdit(index, row){
+      //console.log(row.id);
+      sessionStorage.setItem("readingtaskId", row.id);
       this.$router.push("/readingtask");
-    }
+    },
   },
 };
 </script>

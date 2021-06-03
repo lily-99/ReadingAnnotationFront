@@ -57,9 +57,9 @@ export default {
         username: [
           { required: true, message: "请输入用户名", trigger: "blur" },
           {
-            min: 2,
+            min: 1,
             max: 10,
-            message: "长度在 2 到 10 个字符",
+            message: "长度在 1 到 10 个字符",
             trigger: "blur",
           },
         ],
@@ -67,8 +67,8 @@ export default {
         password: [
           { required: true, message: "请输入密码", trigger: "blur" },
           {
-            min: 6,
-            max: 15,
+            //min: 6,
+            //max: 15,
             message: "长度在 6 到 15 个字符",
             trigger: "blur",
           },
@@ -84,7 +84,7 @@ export default {
         if (!valid) return this.$message.error("登录失败");
         else {
           axios
-            .post(axios.defaults.baseURL + "login", {
+            .post(axios.defaults.baseURL+ "login", {
               username: this.loginForm.username,
               password: this.loginForm.password,
             })
@@ -92,11 +92,13 @@ export default {
               console.log(res);
               if (res.data.status == 1) {
                 this.$message.success("登录成功");
-                localStorage.setItem("userId", this.loginForm.username);
-                console.log(localStorage.userId)
+                //console.log(res.data.data);
+                localStorage.setItem("userId", res.data.data.id);
+                localStorage.setItem("username", res.data.data.username);
+                //console.log(res.data.data.id)
                 this.$router.push("/home");
               } else {
-                this.$message.success(res.data.data.usernameMsg);
+                this.$message.success(res.data.data.message);
               }
             });
           this.$http.post("login", this.loginForm);

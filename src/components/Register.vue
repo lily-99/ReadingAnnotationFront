@@ -81,7 +81,7 @@
 <script>
 import Identify from "./Identify.vue";
 import SIdentify from "./Identify.vue";
-import axios from 'axios'
+import axios from "axios";
 export default {
   components: { SIdentify, Identify },
   name: "Register",
@@ -189,7 +189,7 @@ export default {
             //this.$refs.registerForm.validateField('password')
             this.axios
               .post(axios.defaults.baseURL + "register", {
-                id: this.register_form.id,
+                stuId: this.register_form.id,
                 username: this.register_form.name,
                 password: this.register_form.password,
                 email: this.register_form.mail,

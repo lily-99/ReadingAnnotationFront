@@ -54,13 +54,11 @@ export default {
     //console.log(value);
     axios
       .post(axios.defaults.baseURL + "listAllMember", {
-        params: {
           groupId: 1,
-        },
       })
       .then((res) => {
         console.log(res.data);
-        //this.array = res.data.data;
+        this.array = res.data.data;
       });
   },
 };

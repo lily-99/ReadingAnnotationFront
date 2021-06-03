@@ -45,9 +45,13 @@
           <p>{{ currentHLText }}</p>
           <!-- 获取文章id、高亮id、批注id -->
           <CommentContent
-            v-bind:articleId="articleId"
-            v-bind:hlId="currentHLId"
-            v-bind:comment="hlComments"
+            v-bind:articleId="this.articleId"
+            v-bind:hlId="this.currentHLId"
+            v-bind:comment="this.hlComments"
+            v-bind:commentText="this.currentHLText"
+            v-bind:replyment="this.replyment"
+            @child="father"
+            @childhuifu="fatherhuifu"
           ></CommentContent>
         </div>
       </el-card>
@@ -72,43 +76,28 @@ export default {
   data() {
     return {
       articleId: "",
-      articleHtml:
-        "<p>《将进酒》</p>\
-            <p>唐 李白</p>\
-            <p>\
-              君不见黄河之水天上来，奔流到海不复回。<br />\
-              君不见高堂明镜悲白发，朝如青丝暮成雪。<br />\
-              人生得意须尽欢，莫使金樽空对月。<br />\
-              天生我材必有用，千金散尽还复来。<br />\
-              烹羊宰牛且为乐，会须一饮三百杯。<br />\
-              岑夫子，丹丘生，将进酒，杯莫停。<br />\
-              与君歌一曲，请君为我倾耳听。(倾耳听 一作：侧耳听)<br />\
-              钟鼓馔玉不足贵，但愿长醉不愿醒。(不足贵 一作：何足贵；不愿醒\
-              一作：不复醒)<br />\
-              古来圣贤皆寂寞，惟有饮者留其名。(古来 一作：自古；惟 通：唯)<br />\
-              陈王昔时宴平乐，斗酒十千恣欢谑。<br />\
-              主人何为言少钱，径须沽取对君酌。<br />\
-              五花马、千金裘，呼儿将出换美酒，与尔同销万古愁。<br />\
-            </p>", //所需要高亮评论的文本
+      articleHtml: "", //所需要高亮评论的文本
       currentHLText: "",
       currentHLId: "",
       authority: 0, //小组是2，个人是1，公共是0
       delHLbtnDis: true,
       hlComments: [], //所选择高亮的所有评论
+      replyment: [], //评论的回复
     };
   },
   mounted() {
-    //根据阅读任务ID，显示响应的富文本
+    //根据阅读课程ID和阅读任务ID，显示响应的富文本
     var value = sessionStorage.getItem("readingtaskId");
-    console.log(value);
+    this.articleId = value;
+    //console.log(value);
+    // var courseId = sessionStorage.getItem("courseId");
     axios
-      .post(axios.defaults.baseURL + "findEssayById", {
-        params: {
-          id: value,
-        },
+      .post(axios.defaults.baseURL + "selectContent", {
+        id: value,
+        //courseId:courseId //课程ID
       })
       .then((response) => {
-        console.log(response.data.data.content);
+        //console.log(response.data.data.content);
         let textareaHtml = response.data.data.content;
         if (textareaHtml) {
           this.articleHtml = textareaHtml;
@@ -158,6 +147,7 @@ export default {
         const position = this.getPosition(hlDoms);
         this.delHLbtnDis = false;
         this.currentHLId = id;
+        sessionStorage.setItem("highlightId", this.currentHLId);
         this.currentHLText = "";
         //设置高亮文字
         for (var i in hlDoms) {
@@ -239,6 +229,15 @@ export default {
   },
 
   methods: {
+    //子组件向父组件传数据
+    father(data) {
+      console.log(data);
+      this.hlComments = data;
+    },
+    fatherhuifu(data) {
+      console.log(data);
+      this.replyment = data;
+    },
     //显示当前文章的高亮信息
     showArticleHL(authority) {
       this.authority = authority;
@@ -335,38 +334,28 @@ export default {
     delHL() {
       const id = this.currentHLId; // stored highlight id
       log("*click remove-tip*", id);
-      //if (highlighter.remove(id))
-      //{
       highlighter.removeClass("highlight-wrap-hover", id);
       highlighter.remove(id);
       this.delHLbtnDis = true;
       this.currentHLId = "";
       this.currentHLText = "";
-      //} else {
-      //alert("只能删除自己的批注！");
-      //}
     },
 
     //通过高亮ID从数据库获取所有的评论
     getCommentsByHLid(hlId) {
-      return [
-        {
-          id: "111",
-          name: "有毒的黄同学", //评论人名字
-          time: "2016-08-17",
-          content: "好,讲得非常好，good",
-          reply: [
-            //回复评论的信息，是一个数组，如果没内容就是一个空数组
-            {
-              id: "222",
-              responder: "傲娇的", //评论者
-              reviewers: "有毒的黄同学", //被评论者
-              time: "2016-09-05",
-              content: "你说得对",
-            },
-          ],
-        },
-      ];
+      hlId = this.currentHLId;
+      axios
+        .post(axios.defaults.baseURL + "listPingLunByHId", {
+          highLightId: hlId,
+        })
+        .then((response) => {
+          console.log(response.data.data);
+          // console.log(response.data.data.pingLun);
+          // console.log(response.data.data.huiFus);
+          //this.hlComments = response.data.data.pingLun;
+          //this.replyment = response.data.data.huiFus;
+        });
+      return [];
     },
   },
 

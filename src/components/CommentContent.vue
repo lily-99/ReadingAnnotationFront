@@ -1,89 +1,161 @@
 <template>
   <div>
-    <p v-if="comment.length == 0">暂无评论，我来发表第一篇评论！</p>
-    <div v-else>
+    <!-- <p v-if="comment.length == 0">暂无评论，我来发表第一篇评论！</p> -->
+    <!-- <div v-else> -->
+    <div>
       <div
         class="comment_details"
         v-for="(item, index) in comment"
         v-bind:index="index"
       >
-        <span class="comment_name">{{ item.name }}</span> <span>{{ item.time }}</span>
+        <span class="comment_name">{{ item.username }}</span>
+        <span>{{ item.time }}</span>
         <div class="comment_content">{{ item.content }}</div>
-        <el-button size="mini" @click="replyBtn(item.id,item.name)">回复</el-button>
-        <div v-if="item.reply.length > 0">
-          <div class="reply" v-for="reply in item.reply">
-            <span class="comment_name">{{ reply.responder }} </span>回复<span class="comment_name">{{reply.reviewers}}</span> <span>{{ reply.time }}</span>
-            <p>{{ reply.content }}</p>
-            <el-button size="mini" @click="replyBtn(reply.id,reply.responder)">回复</el-button>
-          </div>
-        </div>
+        <!-- <el-button size="mini" @click="replyBtn(item.userId, item.username)"
+          >回复</el-button
+        > -->
+        <el-button
+          size="mini"
+          @click="replyBtn(item.id, item.username, item.userId)"
+          >回复</el-button
+        >
+        <!-- <div v-if="item.reply.length > 0"> -->
+        <!-- <div class="reply" v-for="reply in item.reply">
+          <span class="comment_name">{{ reply.responder }} </span>回复<span
+            class="comment_name"
+            >{{ reply.reviewers }}</span
+          >
+          <span>{{ reply.time }}</span>
+          <p>{{ reply.content }}</p>
+          <el-button size="mini" @click="replyBtn(reply.id, reply.responder)"
+            >回复</el-button
+          >
+        </div> -->
+        <!-- </div> -->
+      </div>
+      <div
+        class="comment_details"
+        v-for="(reply, index) in replyment"
+        v-bind:index="index"
+      >
+        <span class="comment_name">{{ reply.username }} </span>回复<span
+          class="comment_name"
+          >{{ reply.receiver }}</span
+        >
+        <span>{{ reply.time }}</span>
+        <p>{{ reply.content }}</p>
+        <el-button size="mini" @click="replyBtn(reply.id, reply.username)"
+          >回复</el-button
+        >
       </div>
     </div>
     <div class="commentBox">
-      <h3 style="width:100px">发表评论</h3>
+      <h3 style="width: 100px">发表评论</h3>
       <b v-if="isReply">你回复&nbsp;{{ reName }}</b>
-      <textarea name="" value="请填写评论内容" v-model="commentText" rows="4" cols="52" style="resize:none;"></textarea>
-      <el-button class="btn" size="mini"  @click="addComment">发表</el-button>
-      <el-button class="btn" size="mini"  @click="canelComment">取消</el-button>
+      <textarea
+        name=""
+        value="请填写评论内容"
+        v-model="commentText"
+        rows="4"
+        cols="52"
+        style="resize: none"
+      ></textarea>
+      <el-button class="btn" size="mini" @click="addComment">发表</el-button>
+      <el-button class="btn" size="mini" @click="canelComment">取消</el-button>
     </div>
   </div>
-  
 </template>
 
 <script>
+import axios from "axios";
 export default {
   name: "CommemtContent",
   props: {
-    comment:Array,
-      // [
-      //   {
-      //     id: "111"
-      //     name: "有毒的黄同学", //评论人名字
-      //     time: "2016-08-17",
-      //     content: "好,讲得非常好，good",
-      //     reply: [
-      //       //回复评论的信息，是一个数组，如果没内容就是一个空数组
-      //       {
-      //         id: "222"
-      //         responder: "傲娇的", //评论者
-      //         reviewers: "有毒的黄同学", //被评论者
-      //         time: "2016-09-05",
-      //         content: "你说得对",
-      //       },
-      //     ],
-      //   },
-      // ],
-      articleId:'',
-      hlId:''
+    comment: Array,
+    replyment: Array,
+    articleId: "",
+    hlId: "",
   },
-  data () {
+  data() {
     return {
       isReply: false,
-      reName: '',
-      reId: '',
-      commentText: '',
+      reName: "",
+      reId: "",
+      commentText: "",
+      receiverId: "",
     };
   },
   methods: {
-    replyBtn(reId, reName){ //reId  所回复评论的id， reName 所回复评论的评论人
-      this.isReply=true;
-      this.reId=reId;
-      this.reName=reName;
+    replyBtn(reId, reName, userId) {
+      //reId  所回复评论的id， reName 所回复评论的评论人
+      this.isReply = true;
+      this.reId = reId; //评论id
+      this.reName = reName; //评论人
+      this.receiverId = userId;
     },
-    addComment () {  //将评论插入后台
-      if(this.isReply){
-
-      }
-      else{
-
+    addComment() {
+      //将评论插入后台
+      var userId = localStorage.getItem("userId");
+      //console.log(userId);
+      var username = localStorage.getItem("username");
+      //console.log(username);
+      var value = sessionStorage.getItem("readingtaskId");
+      //console.log(value);
+      var highlightId = sessionStorage.getItem("highlightId");
+      //console.log(highlightId);
+      if (this.isReply) {
+        axios
+          .post(axios.defaults.baseURL + "addHuiFu", {
+            //params: {
+            userId: userId,
+            username: username,
+            content: this.commentText,
+            pingLunId: this.reId, //评论完
+            receiverId: this.receiverId,
+            receiver: this.reName,
+          })
+          .then((Response) => {
+            console.log(Response.data);
+            //动态显示到页面上
+            axios
+              .post(axios.defaults.baseURL + "listAllHuifu", {
+                pingLunId: this.reId,
+              })
+              .then((Response) => {
+                console.log(Response.data.data);
+                //this.replyment=Response.data.data;
+                this.$emit("childhuifu", Response.data.data);
+              });
+          });
+      } else {
+        axios
+          .post(axios.defaults.baseURL + "addPingLun", {
+            userId: userId,
+            username: username,
+            content: this.commentText,
+            highLightId: highlightId,
+            articleId: value,
+          })
+          .then((Response) => {
+            console.log(Response.data);
+            //动态显示到页面上
+            axios
+              .post(axios.defaults.baseURL + "listPingLunByHId", {
+                highLightId: highlightId,
+              })
+              .then((response) => {
+                console.log(response.data.data);
+                //this.comment = response.data.data;
+                this.$emit("child", response.data.data);
+              });
+          });
       }
       this.commentText = "";
-      this.isReply=false;
+      this.isReply = false;
     },
     canelComment() {
-      
       this.commentText = "";
-      this.isReply=false;
+      this.isReply = false;
     },
   },
 };

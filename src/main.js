@@ -20,7 +20,8 @@ import VueContextMenu from 'vue-contextmenu'
 Vue.use(VueContextMenu)
 
 // //配置请求的根路径
-axios.defaults.baseURL = "http://112.124.66.114:8080/readingannotation/"
+//axios.defaults.baseURL = "http://112.124.66.114:8080/readingannotation/"
+axios.defaults.baseURL = "http://10.147.23.22:8080/readingannotation/"
 
 
 
