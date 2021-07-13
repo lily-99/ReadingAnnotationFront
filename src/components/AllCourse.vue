@@ -6,7 +6,7 @@
       <el-breadcrumb-item>选择课程</el-breadcrumb-item>
       <el-breadcrumb-item>全部课程</el-breadcrumb-item>
     </el-breadcrumb>
-
+    <!-- 所有课程显示区域 -->
     <el-card>
       <el-table
         ref="multipleTable"
@@ -18,8 +18,6 @@
         @selection-change="handleSelectionChange"
         :row-key="rowKey"
       >
-        <!-- <el-table-column type="selection" width="55" :reserve-selection="true">
-        </el-table-column> -->
         <el-table-column prop="courseId" label="课程号" sortable width="120">
         </el-table-column>
         <el-table-column prop="courseName" label="课程名" sortable width="200">
@@ -43,9 +41,7 @@
             <el-input v-model="search" size="mini" placeholder="请输入课程名" />
           </template>
           <template slot-scope="scope">
-            <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
-              >选择</el-button
-            >
+            <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">选择</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -62,12 +58,6 @@
         :current-page="currentPage"
       >
       </el-pagination>
-      <!-- <div style="margin-top: 20px">
-        <el-button type="primary" plain @click="submit()">全部提交</el-button>
-        <el-button type="success" plain @click="toggleSelection()"
-          >取消选择</el-button
-        >
-      </div> -->
     </el-card>
   </div>
 </template>
@@ -85,10 +75,8 @@ export default {
       pagesize: 5,
     };
   },
-
   mounted() {
     axios.get(axios.defaults.baseURL + "listAllCourse").then((response) => {
-      //console.log(response.data);
       this.tableData = response.data.data;
     });
   },
@@ -112,19 +100,18 @@ export default {
   },
   methods: {
     handleEdit(index, row) {
-      var userId  = localStorage.getItem("userId");
+      var userId = localStorage.getItem("userId");
       //console.log(row.courseId);
       axios
         .post(axios.defaults.baseURL + "selectCourse", {
-            userId:userId,
-            courseId:row.courseId
+          userId: userId,
+          courseId: row.courseId,
         })
         .then((response) => {
           if (response.data.status == 1) {
             this.$message.success("提交成功");
             this.$refs.multipleTable.clearSelection();
-          } 
-          else this.$message.error("请不要重复选择");
+          } else this.$message.error("请不要重复选择");
         });
     },
     rowKey(rows) {
@@ -143,15 +130,6 @@ export default {
       this.pagesize = val;
       this.getPageData();
     },
-    // toggleSelection(rows) {
-    //   if (rows) {
-    //     rows.forEach((row) => {
-    //       this.$refs.multipleTable.toggleRowSelection(row);
-    //     });
-    //   } else {
-    //     this.$refs.multipleTable.clearSelection();
-    //   }
-    // },
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },

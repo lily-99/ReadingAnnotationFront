@@ -3,65 +3,78 @@
     <!-- 头部区域 -->
     <el-header>
       <div>
-        <img src="../assets/ccnulogo.png" alt="" />
+        <img src="../assets/pic/logoHome.png" alt="" />
         <span>协作批注系统</span>
       </div>
       <div class="icon_button">
-        <el-button type="warning" icon="el-icon-star-off" circle @click="person"></el-button>
-        <el-button type="danger" icon="el-icon-delete" circle @click="back"></el-button>
+        欢迎你,{{ name }}
+        <el-button
+          type="primary"
+          icon="el-icon-user"
+          circle
+          @click="person"
+        ></el-button>
+        <el-button
+          type="info"
+          icon="el-icon-refresh-left"
+          circle
+          @click="back"
+        ></el-button>
       </div>
-      <!-- <el-button type="info" @click="back">退出</el-button> -->
     </el-header>
     <!-- 页面主题区域 -->
     <el-container>
       <!-- 侧边栏 -->
-      <el-aside :width="isCollapse ? '64px' : '150px'">
-        <div class="toggle-button" @click="toggleCollapse">|||</div>
+      <el-aside :width="isCollapse ? '64px' : '200px'">
+        <!-- <div class="toggle-button" @click="toggleCollapse">|||</div> -->
+        <!-- <div class="toggle-button">|||</div> -->
         <!-- 侧边栏菜单区域 -->
         <el-menu
           background-color="#333744"
           text-color="#fff"
           active-text-color="#409EFF"
-          default-active="allcourse"
+          overflow-y:
+          scroll
+          :default-active="$route.path"
           :collapse="isCollapse"
           :collapse-transition="false"
           :router="true"
         >
-          <el-submenu index="sc">
+          <el-submenu index="1">
             <template slot="title">
               <i class="el-icon-zoom-in"></i>
               <span>选择课程</span>
             </template>
-            <el-menu-item index="allcourse">
+            <el-menu-item index="/allcourse">
               <template slot="title">
                 <i class="el-icon-menu"></i>
                 <span>全部课程</span>
               </template>
             </el-menu-item>
-            <el-menu-item index="selectcourse">
+            <el-menu-item index="/selectcourse">
               <template slot="title">
                 <i class="el-icon-menu"></i>
                 <span>已选课程</span>
               </template>
             </el-menu-item>
           </el-submenu>
-          <el-menu-item index="allreadingtasks">
+          <el-menu-item index="/allreadingtasks">
             <i class="el-icon-tickets"></i>
             <span slot="title">所有任务</span>
           </el-menu-item>
-          <el-menu-item index="readingtask">
+          <el-menu-item index="/readingtask">
             <i class="el-icon-tickets"></i>
             <span slot="title">阅读任务</span>
           </el-menu-item>
-          <el-menu-item index="studydata">
+          <el-menu-item index="/studydata">
             <i class="el-icon-document"></i>
             <span slot="title">学习数据</span>
           </el-menu-item>
-          <el-menu-item index="groups">
+          <el-menu-item index="/groups">
             <i class="el-icon-location"></i>
             <span slot="title">小组成员</span>
           </el-menu-item>
-          <el-menu-item index="notice">
+          <el-menu-item index="/notice">
             <i class="el-icon-bell"></i>
             <span slot="title">通知公告</span>
           </el-menu-item>
@@ -80,8 +93,13 @@
 export default {
   data() {
     return {
+      name: "",
       isCollapse: false,
     };
+  },
+  mounted() {
+    var username = localStorage.getItem("username");
+    this.name = username;
   },
   //点击按钮，左侧菜单整合
   methods: {
@@ -90,10 +108,12 @@ export default {
     },
     back() {
       this.$router.push("/login");
+      sessionStorage.clear();
+      localStorage.clear();
     },
-    person(){
+    person() {
       this.$router.push("/person");
-    }
+    },
   },
 };
 </script>
@@ -140,7 +160,7 @@ export default {
   letter-spacing: 0.2em;
   cursor: pointer;
 }
-.icon_button{
+.icon_button {
   display: right;
 }
 </style>

@@ -18,9 +18,6 @@
               </el-form-item>
               <el-form-item label="课程名">
                 <span>{{ props.row.courseName }}</span>
-                <el-button type="text" @click="reading(props.row.courseId)"
-                  >开始阅读</el-button
-                >
               </el-form-item>
               <el-form-item label="开始时间">
                 <span>{{ props.row.startTime }}</span>
@@ -34,14 +31,22 @@
         <el-table-column label="课程号" prop="courseId"> </el-table-column>
         <el-table-column label="课程名" prop="courseName"></el-table-column>
         <el-table-column label="开始时间" prop="startTime"> </el-table-column>
+        <el-table-column label="结束时间" prop="endTime"> </el-table-column>
         <el-table-column fixed="right" label="操作" width="120">
           <template slot-scope="scope">
+            <el-button
+              type="text"
+              size="small"
+              @click="reading(scope.row.courseId)"
+            >
+              阅读
+            </el-button>
             <el-button
               @click.native.prevent="deleteRow(scope.$index, tableData)"
               type="text"
               size="small"
             >
-              移除
+              删除
             </el-button>
           </template>
         </el-table-column>
@@ -82,7 +87,7 @@ export default {
         userId: userId,
       })
       .then((Response) => {
-        console.log(Response.data);
+        //console.log(Response.data);
         this.tableData = Response.data.data;
       });
   },
@@ -97,7 +102,6 @@ export default {
         .then((Response) => {
           if (Response.data.status == 1) {
             this.$message.success("删除成功");
-
             rows.splice(index, 1);
             this.tableData = rows;
           }

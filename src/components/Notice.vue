@@ -31,7 +31,7 @@ export default {
         courseId:2
       }
     }).then(Response=>{
-      console.log(Response.data.data);
+      //console.log(Response.data.data);
       this.tableData=Response.data.data;
     })
   }

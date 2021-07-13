@@ -5,7 +5,12 @@ module.exports = {
     overlay: {
       warnings: false,
       errors: true,
-      //before: require('./src/mock/index.js')
-    }
+    },
+    host: '127.0.0.1',
+    // headers:{
+    //   'Access-Control-Allow-Origin':'*',
+    // },
+    // hotOnly:false,
+    // disableHostCheck:true
   },
 }

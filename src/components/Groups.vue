@@ -8,19 +8,15 @@
     <!-- 卡片视图区域 -->
     <div class="box">
       <template v-for="(item,index) in array">
-         <!-- <div class="box_bar" :key="index"> -->
           <div class="box_bar">
-          <!-- {{item}} -->
           <div class="box_img">
-            <!-- <img  class="box_img" :src="item.pic"></img> -->
-            <img  class="box_img" src="headerUrl"></img>
+            <img  class="box_img" :src="item.headerUrl"></img>
             <div class="box_name">{{item.username}}</div>
           </div>
           <div class="box_pro">
-            <!-- <el-progress :text-inside="true" :stroke-width="22" :percentage="item.pro1"></el-progress> -->
-              <el-progress :text-inside="true" :stroke-width="22" :percentage="20"></el-progress>
-              <el-progress :text-inside="true" :stroke-width="22" :percentage="30" status="success" style="margin-top:10px"></el-progress>
-              <el-progress :text-inside="true" :stroke-width="22" :percentage="70" status="warning" style="margin-top:10px"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="22" :percentage="20"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="22" :percentage="30" status="success" style="margin-top:10px"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="22" :percentage="70" status="warning" style="margin-top:10px"></el-progress>
           </div> 
           </div>
       </template>
@@ -42,7 +38,6 @@
 
 <script>
 import axios from "axios";
-//import mock from "mockjs";
 export default {
   data() {
     return {
@@ -50,14 +45,12 @@ export default {
     };
   },
   mounted() {
-    //var value = sessionStorage.getItem("courseId");
-    //console.log(value);
     axios
       .post(axios.defaults.baseURL + "listAllMember", {
-          groupId: 1,
+        groupId: 1,
       })
       .then((res) => {
-        console.log(res.data);
+        //console.log(res.data);
         this.array = res.data.data;
       });
   },

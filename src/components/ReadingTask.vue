@@ -1,59 +1,71 @@
 <template>
   <div>
     <!-- 高亮按钮 -->
-    <el-button id="js-highlight" style="width: 80px" @click="highlightText"
+    <el-button id="js-highlight" class="btnHighlight" @click="highlightText"
       >高亮</el-button
     >
-
     <!-- 面包屑导航区域 -->
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/allcourse' }">首页</el-breadcrumb-item>
       <el-breadcrumb-item>阅读任务</el-breadcrumb-item>
     </el-breadcrumb>
     <div style="display: flex">
-      <!-- 卡片视图区域 -->
+      <!-- 阅读区域 -->
       <el-card style="width: 1200px; margin-right: 20px">
         <div slot="header">
           <div style="margin: 20px 0">
-            <!--小组是2，个人是1，公共是0 -->
-            <el-button plain @click="showArticleHL(0)">公开</el-button>
-            <el-button type="primary" plain @click="showArticleHL(1)"
-              >仅自己可见</el-button
+            <!--小组是1，个人是0，公共是2 -->
+            <el-button
+              v-for="(list, index) in leftPart"
+              @click="
+                showArticleHL(index);
+                leftChange(index);
+              "
+              :class="{ liBackground: changeLeftBackground == index }"
             >
-            <el-button type="success" plain @click="showArticleHL(2)"
-              >仅小组可见</el-button
-            >
+              {{ list.name }}
+            </el-button>
           </div>
         </div>
-        <div>
+
+        <el-scrollbar
+          id="scro"
+          style="height: 425px; width: 800px; position: absolute"
+        >
           <div id="articleDiv" v-html="articleHtml"></div>
-        </div>
+        </el-scrollbar>
       </el-card>
 
-      <el-card style="width: 600px">
-        <div id="comment" class="col-md-9 rightBox">
-          <div style="margin: 20px 0">
-            <h3>高亮的文字</h3>
-            <el-button
-              id="delHLbtn"
-              type="warning"
-              @click="delHL"
-              :disabled="delHLbtnDis"
-              >删除高亮</el-button
-            >
-          </div>
-          <p>{{ currentHLText }}</p>
-          <!-- 获取文章id、高亮id、批注id -->
-          <CommentContent
-            v-bind:articleId="this.articleId"
-            v-bind:hlId="this.currentHLId"
-            v-bind:comment="this.hlComments"
-            v-bind:commentText="this.currentHLText"
-            v-bind:replyment="this.replyment"
-            @child="father"
-            @childhuifu="fatherhuifu"
-          ></CommentContent>
-        </div>
+      <!-- 评论区域 -->
+      <el-card style="width: 600px; height: 590px">
+        <el-scrollbar style="height: 590px">
+          <div id="comment" class="col-md-9 rightBox">
+            <div style="margin: 20px 0">
+              <h3>高亮文字</h3>
+              <p style="font-style: italic; color: #ff915b">
+                {{ currentHLText }}
+              </p>
+              <el-button
+                id="delHLbtn"
+                type="primary"
+                @click="delHL"
+                :disabled="delHLbtnDis"
+                icon="el-icon-delete"
+                size="mini"
+                >删除</el-button
+              >
+            </div>
+
+            <CommentContent
+              v-bind:articleId="this.articleId"
+              v-bind:hlId="this.currentHLId"
+              v-bind:comment="this.hlComments"
+              v-bind:commentText="this.currentHLText"
+              v-bind:replyment="this.replyment"
+              @child="father"
+              @childhuifu="fatherhuifu"
+            ></CommentContent></div
+        ></el-scrollbar>
       </el-card>
     </div>
   </div>
@@ -75,6 +87,12 @@ sessionStorage.setItem("init", 0);
 export default {
   data() {
     return {
+      leftPart: [
+        { name: "仅自己可见" },
+        { name: "仅小组可见" },
+        { name: "公开可见" },
+      ],
+      changeLeftBackground: 0,
       articleId: "",
       articleHtml: "", //所需要高亮评论的文本
       currentHLText: "",
@@ -89,20 +107,22 @@ export default {
     //根据阅读课程ID和阅读任务ID，显示响应的富文本
     var value = sessionStorage.getItem("readingtaskId");
     this.articleId = value;
-    //console.log(value);
-    // var courseId = sessionStorage.getItem("courseId");
-    axios
-      .post(axios.defaults.baseURL + "selectContent", {
-        id: value,
-        //courseId:courseId //课程ID
-      })
-      .then((response) => {
-        //console.log(response.data.data.content);
-        let textareaHtml = response.data.data.content;
-        if (textareaHtml) {
-          this.articleHtml = textareaHtml;
-        }
-      });
+    if (this.articleId == 0) {
+      this.$message.warning("请先选择一项阅读任务");
+    } else {
+      axios
+        .post(axios.defaults.baseURL + "selectContent", {
+          id: value,
+          //courseId:courseId //课程ID
+        })
+        .then((response) => {
+          //console.log(response.data.data.content);
+          let textareaHtml = response.data.data.content;
+          if (textareaHtml) {
+            this.articleHtml = textareaHtml;
+          }
+        });
+    }
 
     //高亮部分
     highlighter.hooks.Render.SelectedNodes.tap((id, selectedNodes) => {
@@ -168,7 +188,6 @@ export default {
       .on(Highlighter.event.REMOVE, ({ ids }) => {
         if (sessionStorage.getItem("init") != 1) {
           log("remove -", ids);
-          ids.forEach((id) => store.remove(id));
         }
       });
 
@@ -199,23 +218,27 @@ export default {
       var mx = e.clientX;
       var my = e.clientY;
       var articleDiv = document.getElementById("articleDiv");
+      var scro = document.getElementById("scro");
+      //var articleDiv = document.getElementById("btnHL");
+      //console.log(scro.offsetWidth,scro.offsetHeight);
+      //console.log(articleDiv.offsetWidth,articleDiv.offsetLeft);
       if (
-        mx > articleDiv.offsetLeft &&
-        mx < articleDiv.offsetLeft + articleDiv.offsetWidth &&
-        my > articleDiv.offsetTop &&
-        my < articleDiv.offsetTop + articleDiv.offsetHeight
+        mx > scro.offsetLeft &&
+        mx < scro.offsetLeft + scro.offsetWidth &&
+        my > scro.offsetTop &&
+        my < scro.offsetTop + scro.offsetHeight
       ) {
         var rm = document.getElementById("js-highlight");
         var rmWidth = parseInt(rm.style.width);
         var pageWidth = document.documentElement.clientWidth;
         if (mx + rmWidth < pageWidth) {
-          rm.style.left = mx + "px";
-          rm.style.top = my + "px";
+          rm.style.left = e.pageX + "px";
+          rm.style.top = e.pageY + "px";
+          rm.style.position = "absolute";
         } else {
-          rm.style.right = mx + "px";
-          rm.style.top = my + "px";
+          rm.style.left = e.pageX + "px";
+          rm.style.top = e.pageY + "px";
         }
-
         rm.style.display = "block";
 
         return false; //阻止默认的右键菜单显示
@@ -229,35 +252,45 @@ export default {
   },
 
   methods: {
+    leftChange(index) {
+      this.changeLeftBackground = index;
+    },
     //子组件向父组件传数据
     father(data) {
-      console.log(data);
+      //console.log(data);
       this.hlComments = data;
     },
     fatherhuifu(data) {
-      console.log(data);
+      //console.log(data);
       this.replyment = data;
     },
     //显示当前文章的高亮信息
     showArticleHL(authority) {
+      this.hlComments = null;
+      this.replyment = null;
+      this.currentHLText = null;
       this.authority = authority;
       var requestURL = "";
       var requestParams = {};
+      var articleId = sessionStorage.getItem("readingtaskId");
+      var groupId = localStorage.getItem("groupId");
+      var userId = localStorage.getItem("userId");
+      sessionStorage.setItem("authority", authority);
       switch (authority) {
-        case 0: //公共
-          requestURL =
-            axios.defaults.baseURL + "articleTask/showPublicHighlightInfoList";
-          requestParams = { articleId: 1 };
-          break;
-        case 1: //个人
+        case 0: //个人
           requestURL =
             axios.defaults.baseURL + "articleTask/showHighlightInfoListByUser";
-          requestParams = { articleId: 1, userId: 3 };
+          requestParams = { articleId: articleId, userId: userId };
           break;
-        case 2: //小组
+        case 1: //小组
           requestURL =
             axios.defaults.baseURL + "articleTask/showGroupHighlightInfoList";
-          requestParams = { articleId: 1, groupId: 2 };
+          requestParams = { articleId: articleId, groupId: groupId };
+          break;
+        case 2: //公共
+          requestURL =
+            axios.defaults.baseURL + "articleTask/showPublicHighlightInfoList";
+          requestParams = { articleId: articleId };
       }
       axios
         .get(requestURL, {
@@ -333,31 +366,53 @@ export default {
 
     delHL() {
       const id = this.currentHLId; // stored highlight id
+      //console.log(id);
       log("*click remove-tip*", id);
-      highlighter.removeClass("highlight-wrap-hover", id);
-      highlighter.remove(id);
-      this.delHLbtnDis = true;
-      this.currentHLId = "";
-      this.currentHLText = "";
+      var userId = localStorage.getItem("userId");
+      axios
+        .get(axios.defaults.baseURL + "articleTask/deleteHighlight", {
+          params: {
+            userId: userId,
+            highlightId: id,
+          },
+        })
+        .then((ret) => {
+          let code = ret.data.status;
+          if (code == 1) {
+            this.$message.success("删除成功");
+            highlighter.remove(id);
+            //highlighter.removeClass("highlight-wrap-hover", id);
+            this.delHLbtnDis = true;
+            this.currentHLId = "";
+            this.currentHLText = "";
+            this.hlComments = [];
+            this.replyment = [];
+          } else {
+            this.$message.error("删除失败");
+          }
+        });
     },
 
     //通过高亮ID从数据库获取所有的评论
     getCommentsByHLid(hlId) {
       hlId = this.currentHLId;
+      var userId = localStorage.getItem("userId");
+      var authority = sessionStorage.getItem("authority");
+      var groupId = localStorage.getItem("groupId");
       axios
         .post(axios.defaults.baseURL + "listPingLunByHId", {
           highLightId: hlId,
+          authority: authority,
+          userId: userId,
+          groupId: groupId,
         })
         .then((response) => {
-          console.log(response.data.data);
+          //console.log(response.data.data);
           this.hlComments = response.data.data;
-        });
-        axios.post(axios.defaults.baseURL+"listAllHuifu",{
-          highLightId: hlId,
-        }).then(response=>{
-          console.log(response.data.data);
-          this.replyment=response.data.data;
         })
+        .catch((err) => {
+          console.log(err);
+        });
       return [];
     },
   },
@@ -374,9 +429,23 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.el-scrollbar .el-scrollbar__wrap {
+  overflow-x: hidden;
+}
+
+.liBackground {
+  //background: -webkit-gradient(linear, 0 0, 0 100%, from(#4070d4), to(#409eff));
+  background: #409eff;
+  color: #fff;
+}
 .rightBox {
   background: #fff;
   padding-bottom: 2em;
   padding-top: 5px;
+}
+.btnHighlight {
+  width: 80px;
+  z-index: 1000;
+  // position: absolute;
 }
 </style>

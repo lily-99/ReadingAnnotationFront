@@ -8,9 +8,6 @@ import '@/assets/CSS/global.css'
 import './assets/fonts/iconfont.css'
 import './assets/font_lock/iconfont.css'
 
-//引入js文件
-import './mock/index.js'
-//import './mock/api.js'
 
 import axios from 'axios'
 import VueAxios from 'vue-axios'
@@ -20,10 +17,8 @@ import VueContextMenu from 'vue-contextmenu'
 Vue.use(VueContextMenu)
 
 // //配置请求的根路径
-//axios.defaults.baseURL = "http://112.124.66.114:8080/readingannotation/"
-axios.defaults.baseURL = "http://10.147.23.22:8080/readingannotation/"
-
-
+axios.defaults.baseURL = "http://112.124.66.114:8080/readingannotation/"
+//axios.defaults.baseURL = "http://192.168.43.40:8080/readingannotation/"
 
 
 

@@ -3,7 +3,7 @@
     <div class="login_box">
       <!-- 头像区 -->
       <div class="avatar_box">
-        <img src="../assets/logo.png" alt="" />
+        <img src="../assets/pic/logo.png" alt="" />
       </div>
       <!-- 登录表单区 -->
       <el-form
@@ -55,22 +55,30 @@ export default {
       loginFormRules: {
         //验证用户名是否合法
         username: [
-          { required: true, message: "请输入用户名", trigger: "blur" },
           {
-            min: 1,
+            required: true,
+            message: "请输入用户名",
+            trigger: "blur",
+          },
+          {
+            min: 10,
             max: 10,
-            message: "长度在 1 到 10 个字符",
+            message: "长度为10个字符",
             trigger: "blur",
           },
         ],
         //验证密码是否合法
         password: [
-          { required: true, message: "请输入密码", trigger: "blur" },
+          { 
+            required: true, 
+            message: "请输入密码", 
+            trigger: "blur" 
+          },
           {
             //min: 6,
             //max: 15,
-            message: "长度在 6 到 15 个字符",
-            trigger: "blur",
+            //message: "长度在 6 到 15 个字符",
+            //trigger: "blur",
           },
         ],
       },
@@ -84,24 +92,27 @@ export default {
         if (!valid) return this.$message.error("登录失败");
         else {
           axios
-            .post(axios.defaults.baseURL+ "login", {
-              username: this.loginForm.username,
+            .post(axios.defaults.baseURL + "login", {
+              stuId: this.loginForm.username,
               password: this.loginForm.password,
             })
             .then((res) => {
-              console.log(res);
+              //console.log(res);
               if (res.data.status == 1) {
                 this.$message.success("登录成功");
                 //console.log(res.data.data);
                 localStorage.setItem("userId", res.data.data.id);
                 localStorage.setItem("username", res.data.data.username);
-                //console.log(res.data.data.id)
+                localStorage.setItem("groupId", res.data.data.groupId);
+                sessionStorage.setItem("courseId",0);
+                sessionStorage.setItem("readingtaskId", 0);
+                //console.log(res.data.data.groupId)
                 this.$router.push("/home");
               } else {
                 this.$message.success(res.data.data.message);
               }
             });
-          this.$http.post("login", this.loginForm);
+          //this.$http.post("login", this.loginForm);
         }
       });
     },
